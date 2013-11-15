@@ -135,4 +135,9 @@ public class Player extends sheepdog.sim.Player {
 	double c = 50 * (y0 - 50) - 50 * (x0 - 50);
 	return Math.abs(a * x1 + b * y1 + c) / Math.sqrt(a * a + b * b);
     }
+
+    // returns whether the point (x1, y1) is within distance 2 of the line from (x0, y0) to (50, 50)
+    public boolean onLine(double x0, double y0, double x1, double y1) {
+	return distanceToLine(x0, y0, x1, y1) < 2;
+    }
 }
