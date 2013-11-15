@@ -49,6 +49,11 @@ public class Vector {
         v.y = v.y+other.y;
     }
 
+    public void reverse() {
+        v.x = -1*v.x;
+        v.y = -1*v.y;
+    }
+
     public void divided(Vector other) {
         v.x = v.x/other.v.x;
         v.y = v.y/other.v.y;
