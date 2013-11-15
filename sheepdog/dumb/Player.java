@@ -59,5 +59,16 @@ public class Player extends sheepdog.sim.Player {
         		
         return current;
     }
-    
+
+    public double distanceToPoint(double x1, double y1, double x2, double y2) {
+	return Math.sqrt((x1 - x2) ^ 2 + (y1 - y2) ^ 2);
+    }
+
+    // calculates the distance to a line from (x0, y0) to (50, 50)
+    public double distanceToLine(double x0, double y0, double x1, double y1) {
+	double a = x0 - 50;
+	double b = -(y0 - 50);
+	double c = 50 * (y0 - 50) - 50 * (x0 - 50);
+	return Math.abs(a * x1 + b * y1 + c) / Math.sqrt(a^2 + b^2);
+    }
 }
