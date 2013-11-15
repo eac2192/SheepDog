@@ -6,14 +6,11 @@ import sheepdog.sim.Point;
 public class Player extends sheepdog.sim.Player {
     private int nblacks;
     private boolean mode;
-<<<<<<< HEAD
     private boolean[] token;
-=======
     private boolean useBaseline;
     private int lineSheep;
     private ArrayList<Integer> sheepToPushToLine;
 
->>>>>>> b65ee215e50028a59501fbccac1540574b92f389
     public void init(int nblacks, boolean mode) {
         this.nblacks = nblacks;
         this.mode = mode;
@@ -76,31 +73,16 @@ public class Player extends sheepdog.sim.Player {
 	}
 	
         if (current.x < 50) {
-        	length=Math.sqrt(Math.pow((current.x-51),2)+Math.pow((current.y-51),2));
-        	next_x=current.x+((51-current.x)/length)*2;
-        	next_y=current.y+((51-current.y)/length)*2;		
+	    length=Math.sqrt(Math.pow((current.x-51),2)+Math.pow((current.y-51),2));
+	    next_x=current.x+((51-current.x)/length)*2;
+	    next_y=current.y+((51-current.y)/length)*2;		
         }
         else {
 	    if (useBaseline) {
         	for (int i=0; i<sheeps.length; i++){
-<<<<<<< HEAD
-        		if ((i % dogs.length)==id-1 & sheeps[i].x >50 ) {
-        			token[i]=true;
-        			target = true;
-        			length=Math.sqrt(Math.pow((current.x-sheeps[i].x),2)+Math.pow((current.y-sheeps[i].y),2));
-        			if (length>1) {
-        				System.out.printf("here it is dog %d", id);
-        				System.out.printf("we are chasing sheep %d",i);
-        				double offsetx;
-        				double offsety;
-        				double tmplength;
-        				tmplength=Math.sqrt(Math.pow((sheeps[i].x-50),2)+Math.pow((sheeps[i].y-50),2));
-        				offsetx=(sheeps[i].x-50)*(1+tmplength)/tmplength+50;
-        				offsety=(sheeps[i].y-50)*(1+tmplength)/tmplength+50;
-                	next_x=current.x+((offsetx-current.x)/length)*2;
-                	next_y=current.y+((offsety-current.y)/length)*2;
-=======
 		    if ((i % dogs.length)==id-1 & sheeps[i].x >50 ) {
+			token[i]=true;
+			target = true;
 			length=Math.sqrt(Math.pow((current.x-sheeps[i].x),2)+Math.pow((current.y-sheeps[i].y),2));
 			if (length>1) {
 			    System.out.printf("here it is dog %d", id);
@@ -113,8 +95,6 @@ public class Player extends sheepdog.sim.Player {
 			    offsety=(sheeps[i].y-50)*(1+tmplength)/tmplength+50;
 			    next_x=current.x+((offsetx-current.x)/length)*2;
 			    next_y=current.y+((offsety-current.y)/length)*2;
->>>>>>> b65ee215e50028a59501fbccac1540574b92f389
-                	
 			    break;
                 	}
 			else {
@@ -123,60 +103,53 @@ public class Player extends sheepdog.sim.Player {
 			    next_y=current.y+((50-current.y)/length)*2;	
 			    break;
 			}
-        			
-<<<<<<< HEAD
-        		}
-        		
+		    }
         	}
         	if (!target){
         		
-    			System.out.printf("\nelse idle dog?\n");
-    			System.out.printf("here it is dog %d", id);
+		    System.out.printf("\nelse idle dog?\n");
+		    System.out.printf("here it is dog %d", id);
 				
     			
-    			for (int i=0;i<token.length;i++)
+		    for (int i=0;i<token.length;i++)
             		System.out.println(token[i]);
-    		for (int i=sheeps.length-1; i>0; i--){
+		    for (int i=sheeps.length-1; i>0; i--){
         		if (sheeps[i].x >50 ) {
-        			//token[i]=true;
-        			target = true;
-        			length=Math.sqrt(Math.pow((current.x-sheeps[i].x),2)+Math.pow((current.y-sheeps[i].y),2));
-        			if (length>1) {
-        				System.out.printf("here it is dog %d", id);
-        				System.out.printf("we are stealing sheep %d",i);
-        				double offsetx;
-        				double offsety;
-        				double tmplength;
-        				tmplength=Math.sqrt(Math.pow((sheeps[i].x-50),2)+Math.pow((sheeps[i].y-50),2));
-        				offsetx=(sheeps[i].x-50)*(1+tmplength)/tmplength+50;
-        				offsety=(sheeps[i].y-50)*(1+tmplength)/tmplength+50;
-                	next_x=current.x+((offsetx-current.x)/length)*2;
-                	next_y=current.y+((offsety-current.y)/length)*2;
+			    //token[i]=true;
+			    target = true;
+			    length=Math.sqrt(Math.pow((current.x-sheeps[i].x),2)+Math.pow((current.y-sheeps[i].y),2));
+			    if (length>1) {
+				System.out.printf("here it is dog %d", id);
+				System.out.printf("we are stealing sheep %d",i);
+				double offsetx;
+				double offsety;
+				double tmplength;
+				tmplength=Math.sqrt(Math.pow((sheeps[i].x-50),2)+Math.pow((sheeps[i].y-50),2));
+				offsetx=(sheeps[i].x-50)*(1+tmplength)/tmplength+50;
+				offsety=(sheeps[i].y-50)*(1+tmplength)/tmplength+50;
+				next_x=current.x+((offsetx-current.x)/length)*2;
+				next_y=current.y+((offsety-current.y)/length)*2;
                 	
-                	break;
-                	}
-        			else {
-        				length=Math.sqrt(Math.pow((current.x-50),2)+Math.pow((current.y-50),2));
+				break;
+			    }
+			    else {
+				length=Math.sqrt(Math.pow((current.x-50),2)+Math.pow((current.y-50),2));
         	        	next_x=current.x+((50-current.x)/length)*2;
         	        	next_y=current.y+((50-current.y)/length)*2;	
         	        	break;
-        			}
+			    }
         			
         		}
         		
-        	}
-    	}
-        	
-=======
 		    }
-        	}
+		}
+        	
 	    } else {
 
 		
 		
 
 	    }
->>>>>>> b65ee215e50028a59501fbccac1540574b92f389
         }
         current.x=next_x;
         current.y=next_y;
