@@ -28,7 +28,7 @@ public class Player extends sheepdog.sim.Player {
         }
         else {
         	for (int i=0; i<sheeps.length; i++){
-        		if (((i+1) % id)==0 & sheeps[i].x >50 ) {
+        		if ((i % dogs.length)==id-1 & sheeps[i].x >50 ) {
         			length=Math.sqrt(Math.pow((current.x-sheeps[i].x),2)+Math.pow((current.y-sheeps[i].y),2));
         			if (length>1) {
         				System.out.printf("here it is dog %d", id);
