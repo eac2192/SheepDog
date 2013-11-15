@@ -1,5 +1,6 @@
 package sheepdog.dumb;
 
+import java.util.*;
 import sheepdog.sim.Point;
 
 public class Player extends sheepdog.sim.Player {
@@ -21,6 +22,8 @@ public class Player extends sheepdog.sim.Player {
         double length;
         
         Point tmp;
+	PointSortedByDistance[] sortedPoints = Arrays.copyOf(sheeps, sheeps.length, PointSortedByDistance[].class);
+	Arrays.sort(sortedPoints);
         if (current.x < 50) {
         	length=Math.sqrt(Math.pow((current.x-51),2)+Math.pow((current.y-51),2));
         	next_x=current.x+((51-current.x)/length)*2;
