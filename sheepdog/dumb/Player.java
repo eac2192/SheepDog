@@ -24,6 +24,27 @@ public class Player extends sheepdog.sim.Player {
         Point tmp;
 	PointSortedByDistance[] sortedPoints = Arrays.copyOf(sheeps, sheeps.length, PointSortedByDistance[].class);
 	Arrays.sort(sortedPoints);
+	double[] scores = new double[sortedPoints.length];
+	for (int i = 0; i < scores.length; i++) {
+	    Point p0 = sortedPoints[i];
+	    for (PointSortedByDistance p1 : sortedPoints) {
+		double a = distanceToPoint(p1.x, p1.y, 50, 50);
+		double b = distanceToLine(p0.x, p0.y, p1.x, p1.y);
+		if (a > b) {
+		    scores[i] += a - b;
+		}
+	    }
+	}
+	double max = 0;
+	int maxSheep = sortedPoints.length - 1;
+	for (int i = 0; i < scores.length; i++) {
+	    if (scores[i] > max) {
+		max = scores[i];
+		maxSheep = i;
+	    }
+	}
+
+	
         if (current.x < 50) {
         	length=Math.sqrt(Math.pow((current.x-51),2)+Math.pow((current.y-51),2));
         	next_x=current.x+((51-current.x)/length)*2;
@@ -64,8 +85,10 @@ public class Player extends sheepdog.sim.Player {
     }
 
     class PointSortedByDistance extends Point implements Comparable {
+	public double distance;
 	public int compareTo(Object other) {
 	    double dist = distanceToPoint(this.x, this.y, 50, 50);
+	    this.distance = dist;
 	    Point otherPoint = (Point) other;
 	    double otherDist = distanceToPoint(otherPoint.x, otherPoint.y, 50, 50);
 	    if (dist > otherDist) {
