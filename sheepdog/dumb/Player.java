@@ -10,12 +10,15 @@ public class Player extends sheepdog.sim.Player {
     private boolean[] token;
 =======
     private boolean useBaseline;
+    private int lineSheep;
+    private ArrayList<Integer> sheepToPushToLine;
 
 >>>>>>> b65ee215e50028a59501fbccac1540574b92f389
     public void init(int nblacks, boolean mode) {
         this.nblacks = nblacks;
         this.mode = mode;
 	this.useBaseline = false;
+	this.lineSheep = -1;
     }
     
     // Return: the next position
@@ -37,28 +40,40 @@ public class Player extends sheepdog.sim.Player {
         }
         
         Point tmp;
-	PointSortedByDistance[] sortedPoints = Arrays.copyOf(sheeps, sheeps.length, PointSortedByDistance[].class);
+	ArrayList<PointSortedByDistance> pointsList = new ArrayList<PointSortedByDistance>();
+	for (Point p : sheeps) {
+	    if (p.x > 50) {
+		pointsList.add((PointSortedByDistance) p);
+	    }
+	}
+	PointSortedByDistance[] sortedPoints = new PointSortedByDistance[pointsList.size()];
+	sortedPoints = pointsList.toArray(sortedPoints);
 	Arrays.sort(sortedPoints);
-	double[] scores = new double[sortedPoints.length];
-	for (int i = 0; i < scores.length; i++) {
-	    Point p0 = sortedPoints[i];
-	    for (PointSortedByDistance p1 : sortedPoints) {
-		double a = distanceToPoint(p1.x, p1.y, 50, 50);
-		double b = distanceToLine(p0.x, p0.y, p1.x, p1.y);
-		if (a > b) {
-		    scores[i] += a - b;
+	
+	if (lineSheep < 0) {
+	    double[] scores = new double[sortedPoints.length];
+	    sheepToPushToLine = new ArrayList<Integer>();
+	    for (int i = 0; i < scores.length; i++) {
+		Point p0 = sortedPoints[i];
+		for (int j = 0; j < scores.length; j++) {
+		    Point p1 = sortedPoints[j];
+		    double a = distanceToPoint(p1.x, p1.y, 50, 50);
+		    double b = distanceToLine(p0.x, p0.y, p1.x, p1.y);
+		    if (a > b) {
+			sheepToPushToLine.add(j);
+			scores[i] += a - b;
+		    }
+		}
+	    }
+	    double max = 0;
+	    int lineSheep = sortedPoints.length - 1;
+	    for (int i = 0; i < scores.length; i++) {
+		if (scores[i] > max) {
+		    max = scores[i];
+		    lineSheep = i;
 		}
 	    }
 	}
-	double max = 0;
-	int maxSheep = sortedPoints.length - 1;
-	for (int i = 0; i < scores.length; i++) {
-	    if (scores[i] > max) {
-		max = scores[i];
-		maxSheep = i;
-	    }
-	}
-
 	
         if (current.x < 50) {
         	length=Math.sqrt(Math.pow((current.x-51),2)+Math.pow((current.y-51),2));
@@ -156,6 +171,8 @@ public class Player extends sheepdog.sim.Player {
 		    }
         	}
 	    } else {
+
+		
 		
 
 	    }
