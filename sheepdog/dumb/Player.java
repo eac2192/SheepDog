@@ -60,8 +60,22 @@ public class Player extends sheepdog.sim.Player {
         return current;
     }
 
+    class PointSortedByDistance extends Point implements Comparable {
+	public int compareTo(Object other) {
+	    double dist = distanceToPoint(this.x, this.y, 50, 50);
+	    Point otherPoint = (Point) other;
+	    double otherDist = distanceToPoint(otherPoint.x, otherPoint.y, 50, 50);
+	    if (dist > otherDist) {
+		return 1;
+	    } else if (dist < otherDist) {
+		return -1;
+	    }
+	    return 0;
+	}
+    }
+
     public double distanceToPoint(double x1, double y1, double x2, double y2) {
-	return Math.sqrt((x1 - x2) ^ 2 + (y1 - y2) ^ 2);
+	return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
     }
 
     // calculates the distance to a line from (x0, y0) to (50, 50)
@@ -69,6 +83,6 @@ public class Player extends sheepdog.sim.Player {
 	double a = x0 - 50;
 	double b = -(y0 - 50);
 	double c = 50 * (y0 - 50) - 50 * (x0 - 50);
-	return Math.abs(a * x1 + b * y1 + c) / Math.sqrt(a^2 + b^2);
+	return Math.abs(a * x1 + b * y1 + c) / Math.sqrt(a * a + b * b);
     }
 }
