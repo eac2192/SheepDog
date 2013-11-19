@@ -254,6 +254,12 @@ public class Player extends sheepdog.sim.Player {
     public Point move_straight(Point start, Point dest, double speed) {
         boolean valid = false; 
         Vector dir = new Vector(start, dest);
+        // if its closer than the speed there is no need to do anything
+        // just go there
+        if (dir.magnitude() <= speed && isValid(dir.toPoint())) {
+            return dir.toPoint();
+        }
+        // otherwise we apply velocity
         while (!valid) {
             dir = new Vector(start, dest);
             dir = dir.get_unit();
