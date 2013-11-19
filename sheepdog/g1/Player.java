@@ -2,6 +2,7 @@ package sheepdog.g1;
 
 import sheepdog.sim.Point;
 import java.util.ArrayList;
+import java.util.*;
 
 public class Player extends sheepdog.sim.Player {
     private int nblacks;
@@ -227,11 +228,59 @@ public class Player extends sheepdog.sim.Player {
 
     public Point chaseTowards(Point sheep, Point dest) {
         Vector dir = new Vector(sheep, dest);
-        dir.reverse();
-        Vector temp = dir.get_unit();
-        temp.times(1.9);
-        temp.plus(sheep);
-        return temp.toPoint();
+        // handle case that sheep is very close to fence
+        // we use the wall to our benefit
+        if (distanceFromBorder(sheep) < 0.5) {
+            System.out.println(distanceFromBorder(sheep));
+            dir.times(0.01);
+            dir.plus(sheep);
+            return dir.toPoint();
+        }
+        else {
+            dir.reverse();
+            Vector temp = dir.get_unit();
+            temp.times(1.9);
+            temp.plus(sheep);
+            return temp.toPoint(); 
+        }
+    }
+
+    public double distFromLine(Point p, double m, double b) {
+        double t1 = Math.abs(p.y - m*p.x - b);
+        double t2 = Math.sqrt(Math.pow(m, 2) + 1);
+        // |y - m*x - b|/(m^2 - 1)^(1/2)
+        return t1/t2;
+    }
+
+    public double distanceFromBorder(Point p) {
+        double m, b, dist;
+        double min_dist = 101.00;
+
+        m = getM(TOP_LEFT, TOP_RIGHT);
+        b = getB(TOP_LEFT, TOP_RIGHT);
+        dist = distFromLine(p, m, b);
+        if (dist <= min_dist)
+            min_dist = dist;
+
+        m = getM(TOP_LEFT, BOTTOM_LEFT);
+        b = getB(TOP_LEFT, BOTTOM_LEFT);
+        dist = distFromLine(p, m, b);
+        if (dist <= min_dist)
+            min_dist = dist;
+
+        m = getM(BOTTOM_LEFT, BOTTOM_RIGHT);
+        b = getB(BOTTOM_LEFT, BOTTOM_RIGHT);
+        dist = distFromLine(p, m, b);
+        if (dist <= min_dist)
+            min_dist = dist;
+
+        m = getM(TOP_RIGHT, BOTTOM_RIGHT);
+        b = getB(TOP_RIGHT, BOTTOM_RIGHT);
+        dist = distFromLine(p, m, b);
+        if (dist <= min_dist)
+            min_dist = dist;
+
+        return min_dist;
     }
 
     public boolean isValid(Point dest) {
@@ -274,7 +323,16 @@ public class Player extends sheepdog.sim.Player {
         }
         if (speed <= 0.1) {
             Point p = dir.toPoint();
-            return new Point(50.0, p.y);
+            if (p.y < 0.0)
+                return new Point(p.x, 0.0);
+            else if (p.x < 0.00)
+                return new Point(0.0, p.y);
+            else if (p.y > 100.0)
+                return new Point(p.x, 100.0);
+            else if (p.x > 100.0)
+                return new Point(100.0, p.y);
+            else
+                return new Point(50.0, p.y);
         }
         else {
            return dir.toPoint(); 
@@ -323,7 +381,7 @@ public class Player extends sheepdog.sim.Player {
         return getSide(p.x, p.y);
     }
 
-     boolean hitTheFence(Point p1, Point p2) {
+    boolean hitTheFence(Point p1, Point p2) {
         return hitTheFence(p1.x, p1.y, p2.x, p2.y);
      }
 
@@ -344,4 +402,20 @@ public class Player extends sheepdog.sim.Player {
             return true;
         }
     }
+
+    public double getM(Point a, Point b) {
+        return (b.y - a.y)/(b.x - a.x);
+    }
+
+    public double getB(Point a, Point b) {
+        double m = getM(a, b);
+        return a.y - m*a.x;
+    }
+
+    // BORDER POINTS
+    public final Point TOP_LEFT = new Point(0, 0);
+    public final Point TOP_RIGHT = new Point(100, 0);
+    public final Point BOTTOM_LEFT = new Point(0, 100);
+    public final Point BOTTOM_RIGHT = new Point(100, 100);
+
 }
