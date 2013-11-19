@@ -202,7 +202,7 @@ public class Player extends sheepdog.sim.Player {
         double dist_to;
         for (Point sheep : sheeps) {
             dist_to = distanceBetween(sheep, dest);
-            if (dist_to >= furthest_dist) {
+            if (dist_to >= furthest_dist && !(sheep.x < 50.0)) {
                 furthest_dist = dist_to;
                 furthest_sheep = sheep;
             }
@@ -217,7 +217,7 @@ public class Player extends sheepdog.sim.Player {
         double dist_to;
         for (int i=0; i<sheeps.length; i++) {
             dist_to = distanceFrom(sheeps[i]);
-            if (dist_to <= closest_dist) {
+            if (dist_to <= closest_dist && !(sheeps[i].x < 50.0)) {
                 closest_dist = dist_to;
                 closest_idx = i;
             }
