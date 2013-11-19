@@ -108,7 +108,7 @@ public class Player extends sheepdog.sim.Player {
                     return this.pos;
                 }
                 dest = chaseFurthestFromGoal(group, MIDPOINT);
-                if (distanceFrom(MIDPOINT) < 5) {
+                if (distanceFrom(MIDPOINT) < 3) {
                     this.state = 6;
                     System.out.println("boom");
                     return this.move_straight(dogs[id-1], dest, MAX_SPEED);       
@@ -231,15 +231,7 @@ public class Player extends sheepdog.sim.Player {
         Vector temp = dir.get_unit();
         temp.times(1.9);
         temp.plus(sheep);
-        if (isValid(temp.toPoint())) {
-            return temp.toPoint();
-        }
-        else {
-            temp = dir.get_unit();
-            temp.times(0.1);
-            temp.plus(sheep);
-            return temp.toPoint();
-        }
+        return temp.toPoint();
     }
 
     public boolean isValid(Point dest) {
@@ -260,12 +252,27 @@ public class Player extends sheepdog.sim.Player {
     }
 
     public Point move_straight(Point start, Point dest, double speed) {
+        boolean valid = false; 
         Vector dir = new Vector(start, dest);
-        dir = dir.get_unit();
-        dir.times(speed);
-        dir.plus(start);
-        Point p = dir.toPoint();
-        return dir.toPoint();
+        while (!valid) {
+            dir = new Vector(start, dest);
+            dir = dir.get_unit();
+            dir.times(speed);
+            dir.plus(start);
+            if (isValid(dir.toPoint()) || speed <= 0.1) {
+                valid = true;
+            }
+            else {
+                speed = speed - 0.1;
+            }
+        }
+        if (speed <= 0.1) {
+            Point p = dir.toPoint();
+            return new Point(50.0, p.y);
+        }
+        else {
+           return dir.toPoint(); 
+        }   
     }
 
     public boolean isWithinRange(Point dest, double range) {
@@ -319,13 +326,16 @@ public class Player extends sheepdog.sim.Player {
             return false;
         if (getSide(x1,y1) == 2 || getSide(x2,y2) == 2)
             return false;
+        
         double y3 = (y2-y1)/(x2-x1)*(50-x1)+y1;
 
         assert y3 >= 0 && y3 <= 100;
 
         if (y3 >= OPEN_LEFT && y3 <= OPEN_RIGHT)
             return false;
-        else
+        else{
+            System.out.println("fence");
             return true;
+        }
     }
 }
