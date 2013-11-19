@@ -40,7 +40,6 @@ public class Player extends sheepdog.sim.Player {
 
     public void createPartitions(Point[] dogs, Point[] sheeps) {
         double[] y_pos = evenSpread();
-        // int idx = 0;
         for (int idx=0; idx<dogs.length; idx++) {
             ArrayList<Point> group = new ArrayList<Point>();
             double range_bottom, range_top;
@@ -48,10 +47,14 @@ public class Player extends sheepdog.sim.Player {
                 range_bottom = 0.0;
             }
             else {
-                range_bottom = y_pos[idx-1];
+                range_bottom = (y_pos[idx-1] + y_pos[idx])/2.0;
             }
-            range_top = y_pos[idx];
-
+            if (idx+1 >= dogs.length) {
+                range_top = 100.0;
+            }
+            else {    
+                range_top = (y_pos[idx] + y_pos[idx+1])/2.0;
+            }
             for (int i=0; i<sheeps.length; i++) {
                 if (sheeps[i].y >= range_bottom && sheeps[i].y <= range_top) {
                     group.add(sheeps[i]);
@@ -59,7 +62,6 @@ public class Player extends sheepdog.sim.Player {
             }
             this.partitions.add(group);
         }
-
     }
 
     public Point many_dogs_strategy(Point[] dogs, Point[] sheeps) {
@@ -295,9 +297,6 @@ public class Player extends sheepdog.sim.Player {
         return true;
     }
 
-    // up side is 0
-    // bottom side is 1
-    // at the fence 2
     int getSide(double x, double y) {
         if (x < dimension * 0.5)
             return 0;
@@ -306,6 +305,7 @@ public class Player extends sheepdog.sim.Player {
         else
             return 2;
     }
+
     int getSide(Point p) {
         return getSide(p.x, p.y);
     }
@@ -314,24 +314,15 @@ public class Player extends sheepdog.sim.Player {
         return hitTheFence(p1.x, p1.y, p2.x, p2.y);
      }
 
-    boolean hitTheFence(double x1, double y1,
-                        double x2, double y2) {
-        // on the same side
+    boolean hitTheFence(double x1, double y1, double x2, double y2) {
         if (getSide(x1,y1) == getSide(x2, y2))
             return false;
-
-        // one point is on the fence
         if (getSide(x1,y1) == 2 || getSide(x2,y2) == 2)
             return false;
-        
-        // compute the intersection with (50, y3)
-        // (y3-y1)/(50-x1) = (y2-y1)/(x2-x1)
-
         double y3 = (y2-y1)/(x2-x1)*(50-x1)+y1;
 
         assert y3 >= 0 && y3 <= 100;
 
-        // pass the openning?
         if (y3 >= OPEN_LEFT && y3 <= OPEN_RIGHT)
             return false;
         else

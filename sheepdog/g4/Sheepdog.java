@@ -1,17 +1,22 @@
-package sheepdog.sim;
+package sheepdog.g4;
 
 // general utilities
 import java.io.*;
 import java.util.List;
 import java.util.*;
+
 import javax.tools.*;
+
 import java.util.concurrent.*;
 import java.net.URL;
+
+import sheepdog.sim.Point;
 
 // gui utility
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
+
 import javax.swing.*;
 
 enum PType {
@@ -77,69 +82,9 @@ public class Sheepdog
 
   	// compile and load players dynamically
     //
-	static Player loadPlayer(String group) {
-        try {
-            // get tools
-            URL url = Sheepdog.class.getProtectionDomain().getCodeSource().getLocation();
-            // use the customized reloader, ensure clearing all static information
-            ClassLoader loader = new ClassReloader(url, Sheepdog.class.getClassLoader());
-            if (loader == null) throw new Exception("Cannot load class loader");
-            JavaCompiler compiler = null;
-            StandardJavaFileManager fileManager = null;
-            // get separator
-            String sep = File.separator;
-            // load players
-            // search for compiled files
-            File classFile = new File(ROOT_DIR + sep + group + sep + "Player.class");
-            System.err.println(classFile.getAbsolutePath());
-            if (!classFile.exists() || recompile) {
-                // delete all class files
-                List <File> classFiles = directoryFiles(ROOT_DIR + sep + group, ".class");
-                System.err.print("Deleting " + classFiles.size() + " class files...   ");
-                for (File file : classFiles)
-                    file.delete();
-                System.err.println("OK");
-                if (compiler == null) compiler = ToolProvider.getSystemJavaCompiler();
-                if (compiler == null) throw new Exception("Cannot load compiler");
-                if (fileManager == null) fileManager = compiler.getStandardFileManager(null, null, null);
-                if (fileManager == null) throw new Exception("Cannot load file manager");
-                // compile all files
-                List <File> javaFiles = directoryFiles(ROOT_DIR + sep + group, ".java");
-                System.err.print("Compiling " + javaFiles.size() + " source files...   ");
-                Iterable<? extends JavaFileObject> units = fileManager.getJavaFileObjectsFromFiles(javaFiles);
-                boolean ok = compiler.getTask(null, fileManager, null, null, null, units).call();
-                if (!ok) throw new Exception("Compile error");
-                System.err.println("OK");
-            }
-            // load class
-            System.err.print("Loading player class...   ");
-            Class playerClass = loader.loadClass(ROOT_DIR + "." + group + ".Player");
-            System.err.println("OK");
-            // set name of player and append on list
-            Player player = (Player) playerClass.newInstance();
-            if (player == null)
-                throw new Exception("Load error");
-            else
-                return player;
-
-        } catch (Exception e) {
-            e.printStackTrace(System.err);
-            return null;
-        }
-
-	}
 
 
-    static Player[] loadPlayers(String group, int ndogs) {
-        Player[] players = new Player[ndogs];
-        for (int i = 0; i < ndogs; ++i) {
-            Player p = loadPlayer(group);
-            p.id = i + 1; // set the dog id
-            players[i] = p;
-        }
-        return players;
-    }
-
+  
     // generate a random position on the given side
     static Point randomPosition(int side) {
         Point point = new Point();
@@ -179,8 +124,6 @@ public class Sheepdog
         JFrame f;
         FieldPanel field;
         JButton next;
-        JButton next10;
-        JButton next50;
         JLabel label;
 
         public SheepdogUI() {
@@ -190,14 +133,14 @@ public class Sheepdog
 
         public void init() {}
 
-        private boolean performOnce() {
+        public void actionPerformed(ActionEvent e) {
+
             if (tick > MAX_TICKS) {
                 label.setText("Time out!!!");
                 label.setVisible(true);
                 // print error message
                 System.err.println("[ERROR] The player is time out!");
                 next.setEnabled(false);
-                return false;
             }
             else if (endOfGame()) {
                 label.setText("Finishes in " + tick + " ticks!");
@@ -205,29 +148,10 @@ public class Sheepdog
                 // print success message
                 System.err.println("[SUCCESS] The player achieves the goal in " + tick + " ticks.");
                 next.setEnabled(false);
-                return false;
             }
             else {
                 playStep();
-                return true;
             }
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            int steps = 0;
-
-            if (e.getSource() == next)
-                steps = 1;
-            else if (e.getSource() == next10)
-                steps = 10;
-            else if (e.getSource() == next50)
-                steps = 50;
-
-            for (int i = 0; i < steps; ++i) {
-                if (!performOnce())
-                    break;
-            }
-
             repaint();
         }
 
@@ -241,23 +165,15 @@ public class Sheepdog
             next = new JButton("Next"); 
             next.addActionListener(this);
             next.setBounds(0, 0, 100, 50);
-            next10 = new JButton("Next10"); 
-            next10.addActionListener(this);
-            next10.setBounds(100, 0, 100, 50);
-            next50 = new JButton("Next50"); 
-            next50.addActionListener(this);
-            next50.setBounds(200, 0, 100, 50);
 
             label = new JLabel();
             label.setVisible(false);
-            label.setBounds(0, 60, 200, 50);
+            label.setBounds(150, 0, 100, 50);
             label.setFont(new Font("Arial", Font.PLAIN, 15));
 
             field.setBounds(100, 100, FIELD_SIZE + 50, FIELD_SIZE + 50);
 
             this.add(next);
-            this.add(next10);
-            this.add(next50);
             this.add(label);
             this.add(field);
 
@@ -419,7 +335,7 @@ public class Sheepdog
 
         // hit the left fence        
         if (nx < 0) {
-            //            System.err.println("SHEEP HITS THE LEFT FENCE!!!");
+            System.err.println("SHEEP HITS THE LEFT FENCE!!!");
 
             // move the point to the left fence
             Point temp = new Point(0, now.y);
@@ -432,7 +348,7 @@ public class Sheepdog
         }
         // hit the right fence
         if (nx > dimension) {
-            //            System.err.println("SHEEP HITS THE RIGHT FENCE!!!");
+            System.err.println("SHEEP HITS THE RIGHT FENCE!!!");
 
             // move the point to the right fence
             Point temp = new Point(dimension, now.y);
@@ -442,7 +358,7 @@ public class Sheepdog
         }
         // hit the up fence
         if (ny < 0) {
-            //            System.err.println("SHEEP HITS THE UP FENCE!!!");
+            System.err.println("SHEEP HITS THE UP FENCE!!!");
 
             // move the point to the up fence
             Point temp = new Point(now.x, 0);
@@ -452,7 +368,7 @@ public class Sheepdog
         }
         // hit the bottom fence
         if (ny > dimension) {
-            //            System.err.println("SHEEP HITS THE BOTTOM FENCE!!!");
+            System.err.println("SHEEP HITS THE BOTTOM FENCE!!!");
 
             Point temp = new Point(now.x, dimension);
             double moved = (dimension - now.y);
@@ -465,7 +381,7 @@ public class Sheepdog
         
         // hit the middle fence
         if (hitTheFence(now.x, now.y, nx, ny)) {
-            //            System.err.println("SHEEP HITS THE CENTER FENCE!!!");
+            System.err.println("SHEEP HITS THE CENTER FENCE!!!");
             //            System.err.println(nx + " " + ny);
             //            System.err.println(ox + " " + oy);
 
@@ -570,30 +486,14 @@ public class Sheepdog
 
     }
 
-    static Point[] copyPointArray(Point[] points) {
-        Point[] npoints = new Point[points.length];
-        for (int p = 0; p < points.length; ++p)
-            npoints[p] = new Point(points[p]);
-
-        return npoints;
-    }
-
 
     void playStep() {
-        tick++;        
+        tick++;
 
         // move the player dogs
         Point[] next = new Point[ndogs];
         for (int d = 0; d < ndogs; ++d) {
-            Point[] dogcopy = copyPointArray(dogs);
-
-            try {
-                next[d] = players[d].move(dogcopy, sheeps);
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.err.println("[ERROR] Player throws exception!!!!");
-                next[d] = dogs[d]; // let the dog stay
-            }
+            next[d] = players[d].move(dogs, sheeps);
 
             if (verbose) {
                 System.err.format("Dog %d moves from (%.2f,%.2f) to (%.2f,%.2f)\n", 
@@ -652,63 +552,25 @@ public class Sheepdog
     }
 
 
-    Sheepdog(Player[] players, int nsheeps, int nblacks, boolean mode)
+    Sheepdog(int players, int nsheeps, int nblacks, boolean mode)
     {
-        this.players = players;
-        this.ndogs = players.length;
+        //this.players = players;
+        this.ndogs = players;
         this.nsheeps = nsheeps;
         this.nblacks = nblacks;
         this.mode = mode;
 
-        // print config
+        /*// print config
         System.err.println("##### Game config #####");
         System.err.println("Dogs: " + players.length);
         System.err.println("Sheeps: " + nsheeps);
         System.err.println("Blacks: " + nblacks);
         System.err.println("Mode: " + mode);
         System.err.println("##### end of config #####");
+        */
     }
 
-    
-	public static void main(String[] args) throws Exception
-	{
-        // game parameters
-        String group = null;
-        int ndogs = DEFAULT_DOGS; // d
-        int nsheeps = DEFAULT_SHEEPS; // S
-        int nblacks = DEFAULT_BLACKS; // B
-        boolean mode = DEFAULT_MODE; // basic or advance?
-
-        if (args.length > 0)
-            group = args[0];
-        if (args.length > 1)
-            ndogs = Integer.parseInt(args[1]);
-        if (args.length > 2)
-            nsheeps = Integer.parseInt(args[2]);
-        if (args.length > 3)
-            nblacks = Integer.parseInt(args[3]);
-        if (args.length > 4)
-            mode = Boolean.parseBoolean(args[4]);
-        if (args.length > 5)
-            gui = Boolean.parseBoolean(args[5]);
-
-        // load players
-        Player[] players = loadPlayers(group, ndogs);
-        
-        // create game
-        Sheepdog game = new Sheepdog(players, nsheeps, nblacks, mode);
-        // init game
-        game.init();
-        // play game
-        if (gui) {
-            game.playgui();
-        }
-        else {
-            game.play();
-        }
-
-    }        
-
+  
     // players
     Player[] players;
     // dog positions
