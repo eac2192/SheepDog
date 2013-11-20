@@ -8,6 +8,7 @@ public class Player extends sheepdog.sim.Player {
     private int nblacks;
     private boolean mode;
     public int state;
+    public boolean movedPastThresholdDistance;
     public Point pos;
     public int ndogs;
     public ArrayList<ArrayList<Point>> partitions; 
@@ -35,6 +36,7 @@ public class Player extends sheepdog.sim.Player {
             next = this.many_dogs_strategy(dogs, sheeps);
         }
         Point current = dogs[id-1];
+	movedPastThresholdDistance = false;
         System.out.println("state:" + this.state);
         return next;
     }
@@ -69,22 +71,22 @@ public class Player extends sheepdog.sim.Player {
         switch (state) {
             case 0:
                 if (isWithinRange(MIDPOINT, 4.0)) {
-                   this.state = 1; 
+                   this.state = 4;
                 }  
                 return this.move_straight(dogs[id-1], MIDPOINT, MAX_SPEED);
-            case 1:  
+	    case 1: // unused  
                 if (isWithinRange(new Point(100, 50), 6.0)) {
                     this.state = 2;
                 }
                 return this.move_straight(dogs[id-1], new Point(100, 50), MAX_SPEED);
-            case 2:
+	    case 2: // unused
                 double[] x_pos = evenSpread();
                 Point dest = new Point(100, x_pos[id-1]);
                 if (isWithinRange(dest, 2.0)) {
                     this.state = 3;
                 }
                 return this.move_straight(dogs[id-1], dest, MAX_SPEED);
-            case 3:
+	    case 3: // unused
                 double[] y_pos = evenSpread();
                 Point[] destinations = new Point[ndogs];
                 for (int i=0; i<y_pos.length; i++) {
@@ -112,7 +114,7 @@ public class Player extends sheepdog.sim.Player {
                 System.out.println("before the chase Further");
                 dest = chaseFurthestFromGoal(group, MIDPOINT,dogs);
                 System.out.println("after the chase Further");
-                if (distanceFrom(MIDPOINT) < 3) {
+                if (distanceFrom(MIDPOINT) < 3 && movedPastThresholdDistance) {
                     this.state = 6;
                     System.out.println("boom");
                     return this.move_straight(dogs[id-1], dest, MAX_SPEED);       
