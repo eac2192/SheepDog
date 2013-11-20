@@ -8,6 +8,7 @@ public class Player extends sheepdog.sim.Player {
     private int nblacks;
     private boolean mode;
     public int state;
+    public boolean movedPastThresholdDistance;
     public Point pos;
     public int ndogs;
     public ArrayList<ArrayList<Point>> partitions; 
@@ -35,6 +36,7 @@ public class Player extends sheepdog.sim.Player {
             next = this.many_dogs_strategy(dogs, sheeps);
         }
         Point current = dogs[id-1];
+	movedPastThresholdDistance = false;
         System.out.println("state:" + this.state);
         return next;
     }
@@ -69,7 +71,7 @@ public class Player extends sheepdog.sim.Player {
         switch (state) {
             case 0:
                 if (isWithinRange(MIDPOINT, 4.0)) {
-                   this.state = 1; 
+                   this.state = 4;
                 }  
                 return this.move_straight(dogs[id-1], MIDPOINT, MAX_SPEED);
             case 1:  
@@ -109,11 +111,13 @@ public class Player extends sheepdog.sim.Player {
                     return this.pos;
                 }
                 dest = chaseFurthestFromGoal(group, MIDPOINT);
-                if (distanceFrom(MIDPOINT) < 3) {
+                if (distanceFrom(MIDPOINT) < 3 && movedPastThresholdDistance) {
                     this.state = 6;
                     System.out.println("boom");
                     return this.move_straight(dogs[id-1], dest, MAX_SPEED);       
-                }
+                } else if (distanceFrom(MIDPOINT) >= 3) {
+		    movedPastThresholdDistance = true;
+		}
                 // if (distanceFrom(dest)< 10.0 && isClosestTo(dogs, dest)) {
                 return this.move_straight(dogs[id-1], dest, MAX_SPEED);
                 // }
