@@ -101,6 +101,7 @@ public class Player extends sheepdog.sim.Player {
 
                 // dest = chaseClosestTowards(sheeps, MIDPOINT);
                 ArrayList<Point> group = this.partitions.get(id-1);
+               // System.out.println("hahaha, group size");
                 System.out.println(group.size());
                 if (group.size() == 0) {
                     // System.out.println("boom");
@@ -108,19 +109,22 @@ public class Player extends sheepdog.sim.Player {
                     System.out.println(this.pos.x + " , " + this.pos.y);
                     return this.pos;
                 }
-                dest = chaseFurthestFromGoal(group, MIDPOINT);
+                System.out.println("before the chase Further");
+                dest = chaseFurthestFromGoal(group, MIDPOINT,dogs);
+                System.out.println("after the chase Further");
                 if (distanceFrom(MIDPOINT) < 3) {
                     this.state = 6;
                     System.out.println("boom");
                     return this.move_straight(dogs[id-1], dest, MAX_SPEED);       
                 }
+                System.out.println("before the state 4 return");
                 // if (distanceFrom(dest)< 10.0 && isClosestTo(dogs, dest)) {
                 return this.move_straight(dogs[id-1], dest, MAX_SPEED);
                 // }
                 // dest = new Point(x - MAX_SPEED/10, y);
                 // return dest;
             case 5:
-                dest = chaseClosestTowards(sheeps, MIDPOINT);
+                dest = chaseClosestTowards(sheeps, MIDPOINT,dogs);
                 if (distanceFrom(MIDPOINT) < 3) {
                     this.state = 6;       
                 }
@@ -132,12 +136,12 @@ public class Player extends sheepdog.sim.Player {
                     else {
                         this.state = 8;
                     }
-                    dest = chaseFurthestFromGoal(sheeps, MIDPOINT);
+                    dest = chaseFurthestFromGoal(sheeps, MIDPOINT,dogs);
                     return this.move_straight(dogs[id-1], dest, MAX_SPEED);
                 }
                 return this.move_straight(dogs[id-1], dest, MAX_SPEED);
             case 6:
-                dest = chaseClosestTowards(sheeps, new Point(35.0, 50.0));
+                dest = chaseClosestTowards(sheeps, new Point(35.0, 50.0),dogs);
                 if (distanceFrom(new Point(40.0, 50.0)) < 3) {
                     this.state = 7;      
                 }
@@ -148,7 +152,7 @@ public class Player extends sheepdog.sim.Player {
                 }  
                 return this.move_straight(dogs[id-1], MIDPOINT, MAX_SPEED);
             case 8: 
-                dest = chaseFurthestFromGoal(sheeps, MIDPOINT);
+                dest = chaseFurthestFromGoal(sheeps, MIDPOINT,dogs);
                 if (distanceFrom(dest) < 2) {
                     this.state = 5;   
                 }
@@ -188,30 +192,34 @@ public class Player extends sheepdog.sim.Player {
         }
     }
 
-    public Point chaseFurthestFromGoal(Point[] sheeps, Point dest) {
+    public Point chaseFurthestFromGoal(Point[] sheeps, Point dest, Point[] dogs) {
         ArrayList<Point> temp = new ArrayList<Point>();
         for (int i=0; i<sheeps.length; i++) {
             temp.add(sheeps[i]);
         }
-        return chaseFurthestFromGoal(temp, dest);
+        return chaseFurthestFromGoal(temp, dest, dogs);
     }
 
-    public Point chaseFurthestFromGoal(ArrayList<Point>sheeps, Point dest) {
+    public Point chaseFurthestFromGoal(ArrayList<Point>sheeps, Point dest, Point[] dogs) {
+    	double tmpdis;
         double furthest_dist = 0;
         Point furthest_sheep = dest;
         double dist_to;
+        Point current = dogs[id-1];
         for (Point sheep : sheeps) {
+        	tmpdis = distanceBetween(sheep,current);
             dist_to = distanceBetween(sheep, dest);
-            if (dist_to >= furthest_dist && !(sheep.x < 50.0)) {
+            if (dist_to >= furthest_dist && !(sheep.x < 50.0) && (tmpdis<10)) {
+            	
                 furthest_dist = dist_to;
                 furthest_sheep = sheep;
             }
 
         }
-        return chaseTowards(furthest_sheep, dest);
+        return chaseTowards(furthest_sheep, dest,dogs);
     }
 
-    public Point chaseClosestTowards(Point[] sheeps, Point dest) {
+    public Point chaseClosestTowards(Point[] sheeps, Point dest, Point[] dogs) {
         double closest_dist = 200;
         int closest_idx = 0;
         double dist_to;
@@ -223,10 +231,10 @@ public class Player extends sheepdog.sim.Player {
             }
         }
         Point closestSheep = sheeps[closest_idx];
-        return chaseTowards(closestSheep, dest);
+        return chaseTowards(closestSheep, dest, dogs);
     }
 
-    public Point chaseTowards(Point sheep, Point dest) {
+    public Point chaseTowards(Point sheep, Point dest, Point[] dogs) {
         Vector dir = new Vector(sheep, dest);
         // handle case that sheep is very close to fence
         // we use the wall to our benefit
@@ -234,7 +242,14 @@ public class Player extends sheepdog.sim.Player {
             System.out.println(distanceFromBorder(sheep));
             dir.times(0.01);
             dir.plus(sheep);
+        	//Point current = dogs[id-1];
+        	//Point next = null;
+        	//double length;
+        	//length=Math.sqrt(Math.pow((current.x-50),2)+Math.pow((current.y-50),2));
+            //next.x=current.x+((50-current.x)/length)*2;
+            //next.y=current.y+((50-current.y)/length)*2;   
             return dir.toPoint();
+            //return next;
         }
         else {
             dir.reverse();
@@ -306,7 +321,9 @@ public class Player extends sheepdog.sim.Player {
         // if its closer than the speed there is no need to do anything
         // just go there
         if (dir.magnitude() <= speed && isValid(dir.toPoint())) {
-            return dir.toPoint();
+        	System.out.println("stage 1");
+        	return dir.toPoint();
+            
         }
         // otherwise we apply velocity
         while (!valid) {
@@ -320,8 +337,10 @@ public class Player extends sheepdog.sim.Player {
             else {
                 speed = speed - 0.1;
             }
+            System.out.println("stage while");
         }
         if (speed <= 0.1) {
+        	System.out.println("if speed<0.1");
             Point p = dir.toPoint();
             if (p.y < 0.0)
                 return new Point(p.x, 0.0);
@@ -335,6 +354,9 @@ public class Player extends sheepdog.sim.Player {
                 return new Point(50.0, p.y);
         }
         else {
+        	System.out.println("the end else");
+        	System.out.printf("x is %f",dir.toPoint().x);
+        	System.out.printf("y is %f", dir.toPoint().y);
            return dir.toPoint(); 
         }   
     }
