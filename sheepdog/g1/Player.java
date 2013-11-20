@@ -211,7 +211,7 @@ public class Player extends sheepdog.sim.Player {
         for (Point sheep : sheeps) {
         	tmpdis = distanceBetween(sheep,current);
             dist_to = distanceBetween(sheep, dest);
-            if (dist_to >= furthest_dist && !(sheep.x < 50.0) && (tmpdis<10)) {
+            if (dist_to >= furthest_dist && !(sheep.x < 50.0) && (ndogs >= 3 || (tmpdis<10))) {
             	
                 furthest_dist = dist_to;
                 furthest_sheep = sheep;
@@ -323,6 +323,7 @@ public class Player extends sheepdog.sim.Player {
         // if its closer than the speed there is no need to do anything
         // just go there
         if (dir.magnitude() <= speed && isValid(dir.toPoint())) {
+	    System.out.println(dir.magnitude());
         	System.out.println("stage 1");
         	return dir.toPoint();
             
@@ -353,7 +354,7 @@ public class Player extends sheepdog.sim.Player {
             else if (p.x > 100.0)
                 return new Point(100.0, p.y);
             else
-                return new Point(50.0, p.y);
+                return new Point(p.x, p.y);
         }
         else {
         	System.out.println("the end else");
