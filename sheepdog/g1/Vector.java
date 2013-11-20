@@ -26,6 +26,9 @@ public class Vector {
     }
 
     public Vector get_unit() {
+	if (magnitude() == 0) {
+	    return new Vector(0, 0);
+	}
         return new Vector(v.x/magnitude(), v.y/magnitude());
     }
 
