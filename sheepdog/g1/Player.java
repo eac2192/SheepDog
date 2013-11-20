@@ -74,19 +74,19 @@ public class Player extends sheepdog.sim.Player {
                    this.state = 4;
                 }  
                 return this.move_straight(dogs[id-1], MIDPOINT, MAX_SPEED);
-            case 1:  
+	    case 1: // unused  
                 if (isWithinRange(new Point(100, 50), 6.0)) {
                     this.state = 2;
                 }
                 return this.move_straight(dogs[id-1], new Point(100, 50), MAX_SPEED);
-            case 2:
+	    case 2: // unused
                 double[] x_pos = evenSpread();
                 Point dest = new Point(100, x_pos[id-1]);
                 if (isWithinRange(dest, 2.0)) {
                     this.state = 3;
                 }
                 return this.move_straight(dogs[id-1], dest, MAX_SPEED);
-            case 3:
+	    case 3: // unused
                 double[] y_pos = evenSpread();
                 Point[] destinations = new Point[ndogs];
                 for (int i=0; i<y_pos.length; i++) {
