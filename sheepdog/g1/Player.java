@@ -71,7 +71,7 @@ public class Player extends sheepdog.sim.Player {
         switch (state) {
             case 0:
                 if (isWithinRange(MIDPOINT, 4.0)) {
-		    if (ndogs > 1) { // TODO: be smarter about this
+		    if (ndogs > 0) { // TODO: be smarter about this
 			this.state = 1;
 		    } else {
                         this.state = 4;
@@ -215,7 +215,7 @@ public class Player extends sheepdog.sim.Player {
         for (Point sheep : sheeps) {
         	tmpdis = distanceBetween(sheep,current);
             dist_to = distanceBetween(sheep, dest);
-            if (dist_to >= furthest_dist && !(sheep.x < 50.0) && (ndogs >= 2 || (tmpdis<10))) {
+            if (dist_to >= furthest_dist && !(sheep.x < 50.0) && (ndogs >= 3 || ((id==1 && ndogs != 1)||tmpdis<10))) {
             	
                 furthest_dist = dist_to;
                 furthest_sheep = sheep;
