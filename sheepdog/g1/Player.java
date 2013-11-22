@@ -216,6 +216,10 @@ public class Player extends sheepdog.sim.Player {
 		}
                 System.out.println("before the chase Further");
                 dest = chaseFurthestFromGoal(group, MIDPOINT,dogs);
+		if (dest.x == 50 && dest.y == 50) {
+		    this.state = 5;
+		    return this.pos;
+		}
 		if (id == 3) {
 		    System.out.println("dest y: " + dest.x);
 		    System.out.println("dest x: " + dest.y);
