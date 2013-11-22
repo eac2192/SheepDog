@@ -71,11 +71,7 @@ public class Player extends sheepdog.sim.Player {
         switch (state) {
             case 0:
                 if (isWithinRange(MIDPOINT, 4.0)) {
-		    if (ndogs > 0) { // TODO: be smarter about this
-			this.state = 1;
-		    } else {
-                        this.state = 4;
-		    }
+		    this.state = 4;
                 }  
                 return this.move_straight(dogs[id-1], MIDPOINT, MAX_SPEED);
 	    case 1: // unused  
@@ -326,11 +322,8 @@ public class Player extends sheepdog.sim.Player {
         Vector dir = new Vector(start, dest);
         // if its closer than the speed there is no need to do anything
         // just go there
-        if (dir.magnitude() <= speed && isValid(dir.toPoint())) {
-	    System.out.println(dir.magnitude());
-        	System.out.println("stage 1");
-        	return dir.toPoint();
-            
+        if (dir.magnitude() <= speed && isValid(dest)) {
+	    return dest;
         }
         // otherwise we apply velocity
         while (!valid) {
@@ -358,7 +351,7 @@ public class Player extends sheepdog.sim.Player {
             else if (p.x > 100.0)
                 return new Point(100.0, p.y);
             else
-                return new Point(p.x, p.y);
+                return new Point(50, p.y);
         }
         else {
         	System.out.println("the end else");
