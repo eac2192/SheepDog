@@ -142,6 +142,25 @@ public class Player extends sheepdog.sim.Player {
     }
 
     public void createPartitions(Point[] dogs, Point[] sheeps) {
+	for (int i = 0; i < dogs.length; i++) {
+	    partitions.add(new ArrayList<Point>());
+	}
+	for (Point s : sheeps) {
+	    for (int i = 0; i < dogs.length; i++) {
+		if (i == dogs.length - 1) {
+		    partitions.get(i).add(s);
+		    break;
+		}
+		double angle = Math.PI * ((double) (i + 1) / ndogs) - Math.PI / 2;
+		double line = 50 + (s.x - 50) * Math.tan(angle);
+		if (s.y < line) {
+		    partitions.get(i).add(s);
+		    break;
+		}
+	    }
+	}
+	
+	/*
         double[] y_pos = evenSpread();
         for (int idx=0; idx<dogs.length; idx++) {
             ArrayList<Point> group = new ArrayList<Point>();
@@ -165,6 +184,7 @@ public class Player extends sheepdog.sim.Player {
             }
             this.partitions.add(group);
         }
+	*/
     }
 
     public Point many_dogs_strategy(Point[] dogs, Point[] sheeps) {
