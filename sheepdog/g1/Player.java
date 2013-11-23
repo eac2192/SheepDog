@@ -24,12 +24,13 @@ public class Player extends sheepdog.sim.Player {
         this.nblacks = nblacks;
         this.mode = mode;
         this.state = 0;
-	this.useTempDistance = false;
+	    this.useTempDistance = false;
     }
     
     // Return: the next position
     // my position: dogs[id-1]
     public Point move(Point[] dogs, Point[] sheeps) { 
+        sheeps=updateToNewSheep(sheeps,dogs);
         this.ndogs = dogs.length;
         this.partitions = new ArrayList<ArrayList<Point>>();
         setPos(dogs[id-1]);
@@ -157,6 +158,20 @@ public class Player extends sheepdog.sim.Player {
 
 	return current;
     }
+
+    private Point[] updateToNewSheep(Point[] sheeps,Point[] dogs) {
+        Sheepdog sheepdog=new Sheepdog(dogs.length, sheeps.length, nblacks, false);
+        sheepdog.sheeps=sheeps;
+        sheepdog.dogs=dogs;
+        
+        Point[] newSheeps = new Point[sheeps.length];
+        for (int i = 0; i < sheeps.length; ++i) {
+            // compute its velocity vector
+            newSheeps[i] = sheepdog.moveSheep(i);
+        }
+        return newSheeps;
+    }
+
 
     public void createPartitions(Point[] dogs, Point[] sheeps) {
 	for (int i = 0; i < dogs.length; i++) {
