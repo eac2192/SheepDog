@@ -1,4 +1,4 @@
-package sheepdog.g1;
+package sheepdog.g6;
 
 import sheepdog.sim.Point;
 import java.util.ArrayList;
@@ -35,11 +35,28 @@ public class Player extends sheepdog.sim.Player {
         setPos(dogs[id-1]);
         Point next = new Point();
 	if (sheeps.length / dogs.length >= 10) {
+		System.out.println("in the baseline mode");
+		Point current = dogs[id - 1];
+		double length;
+		double next_x = 0;
+		double next_y = 0;
+		boolean target = false;
+		if (current.x < 50) {
+		    length = Math.sqrt(Math.pow((current.x - 51), 2)
+				       + Math.pow((current.y - 51), 2));
+
+		    next_x = current.x + ((50.5 - current.x) / length) * 1.99;
+		    next_y = current.y + ((50.5 - current.y) / length) * 1.99;
+		    current.x = next_x;
+			current.y = next_y;
+
+			return current;
+
+		} else {
             createPartitions(dogs, sheeps);
             next = this.many_dogs_strategy(dogs, sheeps);
-	    Point current = dogs[id-1];
 	    movedPastThresholdDistance = false;
-	    System.out.println("state:" + this.state);
+	    System.out.println("state:" + this.state);}
 	} else {
 	    next = baseline(dogs, sheeps);
 	}
@@ -188,45 +205,15 @@ public class Player extends sheepdog.sim.Player {
     }
 
     public Point many_dogs_strategy(Point[] dogs, Point[] sheeps) {
-        switch (state) {
-            case 0:
-                if (isWithinRange(MIDPOINT, 4.0)) {
-		    this.state = 4;
-               }  
-                return this.move_straight(dogs[id-1], MIDPOINT, MAX_SPEED);
-	    case 1: // unused  
-                if (isWithinRange(new Point(100, 50), 6.0)) {
-                    this.state = 2;
-                }
-                return this.move_straight(dogs[id-1], new Point(100, 50), MAX_SPEED);
-	    case 2: // unused
-                double[] x_pos = evenSpread();
-                Point dest = new Point(100, x_pos[id-1]);
-                if (isWithinRange(dest, 2.0)) {
-                    this.state = 3;
-                }
-                return this.move_straight(dogs[id-1], dest, MAX_SPEED);
-	    case 3: // unused
-                double[] y_pos = evenSpread();
-                Point[] destinations = new Point[ndogs];
-                for (int i=0; i<y_pos.length; i++) {
-                    destinations[i] = new Point(100, y_pos[i]);
-
-                }
-                if (allInRange(dogs, destinations, 2.0)) {
-                    this.state = 4;
-                }
-                return dogs[id-1];
-            case 4:
+       
                 double x = pos.x;
                 double y = pos.y;          
 
-                // dest = chaseClosestTowards(sheeps, MIDPOINT);
                 ArrayList<Point> group = this.partitions.get(id-1);
-               // System.out.println("hahaha, group size");
+               
                 System.out.println(group.size());
                 if (group.size() == 0) {
-                    // System.out.println("boom");
+                    
                     this.state = 5;
                     System.out.println(this.pos.x + " , " + this.pos.y);
                     return this.pos;
@@ -235,7 +222,7 @@ public class Player extends sheepdog.sim.Player {
 		    useTempDistance = true;
 		}
                 System.out.println("before the chase Further");
-                dest = chaseFurthestFromGoal(group, MIDPOINT,dogs);
+                Point dest = chaseFurthestFromGoal(group, MIDPOINT,dogs);
 		if (dest.x == 50 && dest.y == 50) {
 		    this.state = 5;
 		    return this.pos;
@@ -256,43 +243,6 @@ public class Player extends sheepdog.sim.Player {
                 // }
                 // dest = new Point(x - MAX_SPEED/10, y);
                 // return dest;
-            case 5:
-                dest = chaseClosestTowards(sheeps, MIDPOINT,dogs);
-                if (distanceFrom(MIDPOINT) < 3) {
-                    this.state = 6;       
-                }
-                if (!isClosestTo(dogs, dest)) {
-                    group = this.partitions.get(id-1);
-                    if (group.size() != 0) {
-                        this.state = 4;
-                    }
-                    else {
-                        this.state = 8;
-                    }
-                    dest = chaseFurthestFromGoal(sheeps, MIDPOINT,dogs);
-                    return this.move_straight(dogs[id-1], dest, MAX_SPEED);
-                }
-                return this.move_straight(dogs[id-1], dest, MAX_SPEED);
-            case 6:
-                dest = chaseClosestTowards(sheeps, new Point(35.0, 50.0),dogs);
-                if (distanceFrom(new Point(40.0, 50.0)) < 3) {
-                    this.state = 7;      
-                }
-                return this.move_straight(dogs[id-1], dest, MAX_SPEED);
-            case 7:
-                if (isWithinRange(MIDPOINT, 3.0)) {
-                   this.state = 8; 
-                }  
-                return this.move_straight(dogs[id-1], MIDPOINT, MAX_SPEED);
-            case 8: 
-                dest = chaseFurthestFromGoal(sheeps, MIDPOINT,dogs);
-                if (distanceFrom(dest) < 2) {
-                    this.state = 5;   
-                }
-                return this.move_straight(dogs[id-1], dest, MAX_SPEED); 
-
-        }
-        return dogs[id-1];
         
     }
 
