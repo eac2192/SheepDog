@@ -240,12 +240,12 @@ public class Player extends sheepdog.sim.Player {
     
 
     public ArrayList<Point> getCorrespondingSheep(Point[] sheep) {
-    ArrayList<Point> correspondingSheep = new ArrayList<Point>();
-    ArrayList<Integer> sheepIndices = sheepsForDog.get(id - 1);
-    for (int i : sheepIndices) {
-        correspondingSheep.add(sheep[i]);
-    }
-    return correspondingSheep;
+        ArrayList<Point> correspondingSheep = new ArrayList<Point>();
+        ArrayList<Integer> sheepIndices = sheepsForDog.get(id - 1);
+        for (int i : sheepIndices) {
+            correspondingSheep.add(sheep[i]);
+        }
+        return correspondingSheep;
     }
 
     public Point many_dogs_strategy(Point[] dogs, Point[] sheeps) {
@@ -444,27 +444,28 @@ public class Player extends sheepdog.sim.Player {
 
         // handle case that sheep is very close to fence
         // we use the wall to our benefit
-    /*
         if (distanceFromBorder(sheep) < 0.5) {
             // System.out.println(distanceFromBorder(sheep));
-            // dir.times(0.01);
-            //dir.plus(sheep);
-            Point current = dogs[id-1];
-            Point next = new Point();
-            double length;
-            length=Math.sqrt(Math.pow((current.x-50),2)+Math.pow((current.y-50),2));
-            next.x=current.x+((50-current.x)/length)*2;
-            next.y=current.y+((50-current.y)/length)*2;   
+            Vector temp = dir.get_unit();
+            temp.times(0.1);
+            temp.plus(sheep);
+            return temp.toPoint();
+            // Point current = dogs[id-1];
+            // Point next = new Point();
+            // double length;
+            // length=Math.sqrt(Math.pow((current.x-50),2)+Math.pow((current.y-50),2));
+            // next.x=current.x+((50-current.x)/length)*2;
+            //next.y=current.y+((50-current.y)/length)*2;   
             //return dir.toPoint();
-            return next;
+            //return next;
         }
-        else {*/
+        else {
             dir.reverse();
             Vector temp = dir.get_unit();
             temp.times(1.9);
             temp.plus(sheep);
             return temp.toPoint(); 
-        //}
+        }
     }
 
     public double distFromLine(Point p, double m, double b) {
