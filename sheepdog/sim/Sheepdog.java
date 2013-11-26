@@ -402,11 +402,11 @@ public class Sheepdog
 
         if (verbose) {
             if (!npos.equals(thisSheep)) {
-                System.err.format("Sheep %d moves from (%.2f,%.2f) to (%.2f,%.2f): %.2f\n", 
-                                  sheepId, thisSheep.x, thisSheep.y, npos.x, npos.y, distance(thisSheep, npos));
+                // System.err.format("Sheep %d moves from (%.2f,%.2f) to (%.2f,%.2f): %.2f\n", 
+                                  // sheepId, thisSheep.x, thisSheep.y, npos.x, npos.y, distance(thisSheep, npos));
             }
             else {
-                System.err.format("Sheep %d stays at (%.2f,%.2f)\n", sheepId, thisSheep.x, thisSheep.y);
+                // System.err.format("Sheep %d stays at (%.2f,%.2f)\n", sheepId, thisSheep.x, thisSheep.y);
             }
         }
         return npos;
