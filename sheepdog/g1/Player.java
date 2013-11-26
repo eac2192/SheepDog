@@ -55,7 +55,7 @@ public class Player extends sheepdog.sim.Player {
         Point next = new Point();
 	if (mode && areAllBlacksLeftOfGate(sheeps)) {
 	    ArrayList<Point> whiteSheep = getAllWhitesLeftOfGate(sheeps);
-	    Point dest = dogs[id-1].x > 50 ? MIDPOINT : chaseTowards(whiteSheep.get(0), MIDPOINT, dogs);
+	    Point dest = dogs[id-1].x > 50 ? MIDPOINT : chaseTowards(whiteSheep.get(id % whiteSheep.size()), MIDPOINT, dogs);
 	    return move_straight(dogs[id-1], dest, MAX_SPEED);
 	}
         if (sheeps.length / dogs.length >= 10) {
