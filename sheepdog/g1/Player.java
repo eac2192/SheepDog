@@ -14,7 +14,7 @@ public class Player extends sheepdog.sim.Player {
     public int ndogs;
     public ArrayList<ArrayList<Point>> partitions;
     public ArrayList<ArrayList<Integer>> sheepsForDog;
-    public boolean partitionOnce = false;
+    public boolean partitionOnce = true;
     public boolean useTempDistance;
     public final double MAX_SPEED = 1.98;
     public final Point MIDPOINT = new Point(50, 50);
@@ -32,17 +32,22 @@ public class Player extends sheepdog.sim.Player {
     // Return: the next position
     // my position: dogs[id-1]
     public Point move(Point[] dogs, Point[] sheeps) {
+        this.ndogs = dogs.length;
 	if (sheepsForDog == null) {
 	    sheepsForDog = new ArrayList<ArrayList<Integer>>();
 	    for (int i = 0; i < dogs.length; i++) {
 		sheepsForDog.add(new ArrayList<Integer>());
 	    }
 	    this.partitions = new ArrayList<ArrayList<Point>>();
+	    for (int i = 0; i < dogs.length; i++) {
+		System.out.println(sheepsForDog.get(i).size());
+	    }
 	    createPartitions(dogs, sheeps);
 	}
         // sheeps=updateToNewSheep(sheeps,dogs);
-        this.ndogs = dogs.length;
-        this.partitions = new ArrayList<ArrayList<Point>>();
+	if (!partitionOnce) {
+	    this.partitions = new ArrayList<ArrayList<Point>>();
+	}
         setPos(dogs[id-1]);
         Point next = new Point();
 	if (sheeps.length / dogs.length >= 10) {
@@ -52,6 +57,7 @@ public class Player extends sheepdog.sim.Player {
 	    double next_x = 0;
 	    double next_y = 0;
 	    boolean target = false;
+	    System.out.println("current x: " + current.x);
 	    if (current.x < 50) {
 		length = Math.sqrt(Math.pow((current.x - 51), 2)
 				   + Math.pow((current.y - 51), 2));
@@ -201,6 +207,7 @@ public class Player extends sheepdog.sim.Player {
             		}
             		double angle = Math.PI * ((double) (i + 1) / ndogs) - Math.PI / 2;
             		double line = 50 + (s.x - 50) * Math.tan(angle);
+			System.out.println(line);
             		if (s.y < line) {
             		    partitions.get(i).add(s);
 			    sheepsForDog.get(i).add(idx);
@@ -241,6 +248,8 @@ public class Player extends sheepdog.sim.Player {
     public ArrayList<Point> getCorrespondingSheep(Point[] sheep) {
 	ArrayList<Point> correspondingSheep = new ArrayList<Point>();
 	ArrayList<Integer> sheepIndices = sheepsForDog.get(id - 1);
+	System.out.println("sheep indices: " + sheepIndices.size());
+	System.out.println("sheep length: " + sheep.length);
 	for (int i : sheepIndices) {
 	    correspondingSheep.add(sheep[i]);
 	}
@@ -282,7 +291,7 @@ public class Player extends sheepdog.sim.Player {
     	    double y = pos.y;
 
     	    // dest = chaseClosestTowards(sheeps, MIDPOINT);
-    	    ArrayList<Point> group = this.partitions.get(id-1);
+    	    ArrayList<Point> group = partitionOnce ? getCorrespondingSheep(sheeps) : this.partitions.get(id-1);
     	    // System.out.println("hahaha, group size");
     	    System.out.println(group.size());
     	    if (group.size() == 0) {
@@ -322,7 +331,7 @@ public class Player extends sheepdog.sim.Player {
     		this.state = 6;
     	    }
     	    if (!isClosestTo(dogs, dest)) {
-    		group = this.partitions.get(id-1);
+    		group = partitionOnce ? getCorrespondingSheep(sheeps) : this.partitions.get(id-1);
     		if (group.size() != 0) {
     		    this.state = 4;
     		}
