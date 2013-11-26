@@ -30,7 +30,7 @@ public class Player extends sheepdog.sim.Player {
     // Return: the next position
     // my position: dogs[id-1]
     public Point move(Point[] dogs, Point[] sheeps) { 
-        // sheeps=updateToNewSheep(sheeps,dogs);
+        sheeps=updateToNewSheep(sheeps,dogs);
         this.ndogs = dogs.length;
         this.partitions = new ArrayList<ArrayList<Point>>();
         setPos(dogs[id-1]);
