@@ -47,11 +47,17 @@ public class Player extends sheepdog.sim.Player {
 	    createPartitions(dogs, sheeps);
 	}
         sheeps=updateToNewSheep(sheeps,dogs);
+	
 	if (!partitionOnce) {
 	    this.partitions = new ArrayList<ArrayList<Point>>();
 	}
         setPos(dogs[id-1]);
         Point next = new Point();
+	if (mode && areAllBlacksLeftOfGate(sheeps)) {
+	    ArrayList<Point> whiteSheep = getAllWhitesLeftOfGate(sheeps);
+	    Point dest = dogs[id-1].x > 50 ? MIDPOINT : chaseTowards(whiteSheep.get(0), MIDPOINT, dogs);
+	    return move_straight(dogs[id-1], dest, MAX_SPEED);
+	}
         if (sheeps.length / dogs.length >= 10) {
             System.out.println("in the baseline mode");
             Point current = dogs[id - 1];
@@ -178,6 +184,25 @@ public class Player extends sheepdog.sim.Player {
     current.y = next_y;
 
     return current;
+    }
+
+    public boolean areAllBlacksLeftOfGate(Point[] sheeps) {
+	for (int i = 0; i < nblacks; i++) {
+	    if (sheeps[i].x >= 50) {
+		return false;
+	    }
+	}
+	return true;
+    }
+
+    public ArrayList<Point> getAllWhitesLeftOfGate(Point[] sheeps) {
+	ArrayList<Point> result = new ArrayList<Point>();
+	for (int i = nblacks; i < sheeps.length; i++) {
+	    if (sheeps[i].x < 50) {
+		result.add(sheeps[i]);
+	    }
+	}
+	return result;
     }
 
     private Point[] updateToNewSheep(Point[] sheeps,Point[] dogs) {
@@ -430,6 +455,12 @@ public class Player extends sheepdog.sim.Player {
         return chaseFurthestFromGoal(sheeps, dest, dogs);
     }
         return chaseTowards(furthest_sheep, dest,dogs);
+    }
+
+    public Point chaseClosestTowards(ArrayList<Point> sheeps, Point dest, Point[] dogs) {
+	Point[] sheepsArray = new Point[sheeps.size()];
+	sheepsArray = sheeps.toArray(sheepsArray);
+	return chaseClosestTowards(sheepsArray, dest, dogs);
     }
 
     public Point chaseClosestTowards(Point[] sheeps, Point dest, Point[] dogs) {
