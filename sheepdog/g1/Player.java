@@ -13,6 +13,8 @@ public class Player extends sheepdog.sim.Player {
     public Point pos;
     public int ndogs;
     public ArrayList<ArrayList<Point>> partitions;
+    public ArrayList<ArrayList<Integer>> sheepsForDog;
+    public boolean partitionOnce = false;
     public boolean useTempDistance;
     public final double MAX_SPEED = 1.98;
     public final Point MIDPOINT = new Point(50, 50);
@@ -29,35 +31,46 @@ public class Player extends sheepdog.sim.Player {
     
     // Return: the next position
     // my position: dogs[id-1]
-    public Point move(Point[] dogs, Point[] sheeps) { 
+    public Point move(Point[] dogs, Point[] sheeps) {
         sheeps=updateToNewSheep(sheeps,dogs);
+    	if (sheepsForDog == null) {
+    	    sheepsForDog = new ArrayList<ArrayList<Integer>>();
+    	    for (int i = 0; i < dogs.length; i++) {
+    		sheepsForDog.add(new ArrayList<Integer>());
+    	    }
+    	    this.partitions = new ArrayList<ArrayList<Point>>();
+    	    createPartitions(dogs, sheeps);
+    	}
         this.ndogs = dogs.length;
         this.partitions = new ArrayList<ArrayList<Point>>();
         setPos(dogs[id-1]);
         Point next = new Point();
 	if (sheeps.length / dogs.length >= 10) {
-		System.out.println("in the baseline mode");
-		Point current = dogs[id - 1];
-		double length;
-		double next_x = 0;
-		double next_y = 0;
-		boolean target = false;
-		if (current.x < 50) {
-		    length = Math.sqrt(Math.pow((current.x - 51), 2)
-				       + Math.pow((current.y - 51), 2));
+	    System.out.println("in the baseline mode");
+	    Point current = dogs[id - 1];
+	    double length;
+	    double next_x = 0;
+	    double next_y = 0;
+	    boolean target = false;
+	    if (current.x < 50) {
+		length = Math.sqrt(Math.pow((current.x - 51), 2)
+				   + Math.pow((current.y - 51), 2));
 
-		    next_x = current.x + ((50.5 - current.x) / length) * 1.99;
-		    next_y = current.y + ((50.5 - current.y) / length) * 1.99;
-		    current.x = next_x;
-			current.y = next_y;
+		next_x = current.x + ((50.5 - current.x) / length) * 1.99;
+		next_y = current.y + ((50.5 - current.y) / length) * 1.99;
+		current.x = next_x;
+		current.y = next_y;
 
-			return current;
+		return current;
 
-		} else {
-            createPartitions(dogs, sheeps);
-            next = this.many_dogs_strategy(dogs, sheeps);
-	    movedPastThresholdDistance = false;
-	    System.out.println("state:" + this.state);}
+	    } else {
+		if (!partitionOnce) {
+		    createPartitions(dogs, sheeps);
+		}
+		next = this.many_dogs_strategy(dogs, sheeps);
+		movedPastThresholdDistance = false;
+		System.out.println("state:" + this.state);
+	    }
 	} else {
 	    next = baseline(dogs, sheeps);
 	}
@@ -183,12 +196,14 @@ public class Player extends sheepdog.sim.Player {
         	    for (int i = 0; i < dogs.length; i++) {
             		if (i == dogs.length - 1) {
             		    partitions.get(i).add(s);
+			    sheepsForDog.get(i).add(idx);
             		    break;
             		}
             		double angle = Math.PI * ((double) (i + 1) / ndogs) - Math.PI / 2;
             		double line = 50 + (s.x - 50) * Math.tan(angle);
             		if (s.y < line) {
             		    partitions.get(i).add(s);
+			    sheepsForDog.get(i).add(idx);
             		    break;
             		}
         	    }
@@ -222,6 +237,15 @@ public class Player extends sheepdog.sim.Player {
         }
 	*/
     
+
+    public ArrayList<Point> getCorrespondingSheep(Point[] sheep) {
+	ArrayList<Point> correspondingSheep = new ArrayList<Point>();
+	ArrayList<Integer> sheepIndices = sheepsForDog.get(id - 1);
+	for (int i : sheepIndices) {
+	    correspondingSheep.add(sheep[i]);
+	}
+	return correspondingSheep;
+    }
 
     public Point many_dogs_strategy(Point[] dogs, Point[] sheeps) {
 	   switch (state) {
