@@ -18,6 +18,7 @@ public class Player extends sheepdog.sim.Player {
     public boolean useTempDistance;
     public final double MAX_SPEED = 1.98;
     public final Point MIDPOINT = new Point(50, 50);
+    public int ticks;
     static double OPEN_LEFT = 49.0; // left side of center openning
     static double OPEN_RIGHT = 51.0;
     static double dimension = 100.0; // dimension of the map
@@ -27,13 +28,14 @@ public class Player extends sheepdog.sim.Player {
         this.mode = mode;
         this.state = 0;
         this.useTempDistance = false;
+	this.ticks = 0;
     }
     
     // Return: the next position
     // my position: dogs[id-1]
     public Point move(Point[] dogs, Point[] sheeps) {
 	this.ndogs = dogs.length;
-	if (sheepsForDog == null) {
+	if (ticks++ % 20 == 0) {
 	    sheepsForDog = new ArrayList<ArrayList<Integer>>();
 	    for (int i = 0; i < dogs.length; i++) {
 		sheepsForDog.add(new ArrayList<Integer>());
