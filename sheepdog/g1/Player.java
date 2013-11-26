@@ -372,7 +372,9 @@ public class Player extends sheepdog.sim.Player {
     public Point chaseFurthestFromGoal(Point[] sheeps, Point dest, Point[] dogs) {
         ArrayList<Point> temp = new ArrayList<Point>();
         for (int i=0; i<sheeps.length; i++) {
-            temp.add(sheeps[i]);
+            if (!mode || i < nblacks) {
+                temp.add(sheeps[i]);
+            }
         }
         return chaseFurthestFromGoal(temp, dest, dogs);
     }
@@ -383,7 +385,7 @@ public class Player extends sheepdog.sim.Player {
         Point furthest_sheep = dest;
         double dist_to;
         Point current = dogs[id-1];
-	boolean sheepOnRightSide = false;
+	    boolean sheepOnRightSide = false;
         for (Point sheep : sheeps) {
         	tmpdis = distanceBetween(sheep,current);
             dist_to = distanceBetween(sheep, dest);
@@ -405,10 +407,12 @@ public class Player extends sheepdog.sim.Player {
         int closest_idx = 0;
         double dist_to;
         for (int i=0; i<sheeps.length; i++) {
-            dist_to = distanceFrom(sheeps[i]);
-            if (dist_to <= closest_dist && !(sheeps[i].x < 50.0)) {
-                closest_dist = dist_to;
-                closest_idx = i;
+            if (!mode || i < nblacks) {
+                dist_to = distanceFrom(sheeps[i]);
+                if (dist_to <= closest_dist && !(sheeps[i].x < 50.0)) {
+                    closest_dist = dist_to;
+                    closest_idx = i;
+                }
             }
         }
         Point closestSheep = sheeps[closest_idx];
