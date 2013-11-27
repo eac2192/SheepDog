@@ -1,4 +1,4 @@
-package sheepdog.g1;
+package sheepdog.g6;
 
 import sheepdog.sim.Point;
 import java.util.*;

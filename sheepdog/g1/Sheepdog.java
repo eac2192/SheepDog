@@ -1,4 +1,4 @@
-package sheepdog.g1;
+package sheepdog.g6;
 
 // general utilities
 import java.io.*;

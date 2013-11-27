@@ -1,4 +1,4 @@
-package sheepdog.g1;
+package sheepdog.g6;
 
 import sheepdog.sim.Point;
 import java.util.ArrayList;
@@ -87,6 +87,14 @@ public class Player extends sheepdog.sim.Player {
             }
         } else {
             next = baseline(dogs, sheeps);
+        }
+        if (dogs[id-1].x<50) {
+        	if (next.x>50 && (dogs[id].y<49 ||dogs[id].y>51))
+        			next.x=50;
+        }
+        if (dogs[id-1].x>50) {
+        	if (next.x<50 && (dogs[id].y<49 ||dogs[id].y>51))
+        			next.x=50;
         }
         return next;
     }
@@ -365,7 +373,7 @@ public class Player extends sheepdog.sim.Player {
             }
             return this.move_straight(dogs[id-1], dest, MAX_SPEED);
         case 6:
-            dest = chaseClosestTowards(sheeps, new Point(35.0, 50.0),dogs);
+            dest = chaseClosestTowards(sheeps, new Point(50.0, 50.0),dogs);
             if (distanceFrom(new Point(40.0, 50.0)) < 3) {
                 this.state = 7;
             }
