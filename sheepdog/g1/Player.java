@@ -56,9 +56,18 @@ public class Player extends sheepdog.sim.Player {
 	if (mode && areAllBlacksLeftOfGate(sheeps)) {
 	    ArrayList<Point> whiteSheep = getAllWhitesLeftOfGate(sheeps);
 	    Point dest = dogs[id-1].x > 50 ? MIDPOINT : chaseTowards(whiteSheep.get(id % whiteSheep.size()), MIDPOINT, dogs);
-	    return move_straight(dogs[id-1], dest, MAX_SPEED);
+	    Point tmp=move_straight(dogs[id-1], dest, MAX_SPEED);
+	    if (dogs[id-1].x<50) {
+        	if (tmp.x>50 && (dogs[id].y<49 ||dogs[id].y>51))
+        			tmp.x=50;
+        }
+        if (dogs[id-1].x>50) {
+        	if (tmp.x<50 && (dogs[id].y<49 ||dogs[id].y>51))
+        			tmp.x=50;
+        }
+	    return tmp;
 	}
-        if (sheeps.length / dogs.length >= 10) {
+        if (sheeps.length / dogs.length >= 8 || (mode && nblacks/dogs.length>=8)) {
             System.out.println("in the baseline mode");
             Point current = dogs[id - 1];
             double length;
@@ -106,6 +115,13 @@ public class Player extends sheepdog.sim.Player {
     double next_x = 0;
     double next_y = 0;
     boolean target = false;
+    int targetNum=0;
+    if (!mode) {
+    	targetNum=sheeps.length;
+    }
+    else {
+    	targetNum=nblacks;
+    }
     if (current.x < 50) {
         length = Math.sqrt(Math.pow((current.x - 51), 2)
                    + Math.pow((current.y - 51), 2));
@@ -113,8 +129,8 @@ public class Player extends sheepdog.sim.Player {
         next_x = current.x + ((50.5 - current.x) / length) * 1.99;
         next_y = current.y + ((50.5 - current.y) / length) * 1.99;
 
-    } else {
-        for (int i = 0; i < sheeps.length; i++) {
+    } else  {
+        for (int i = 0; i < targetNum; i++) {
             if ((i % dogs.length) == id - 1 & sheeps[i].x > 50) {
                 // if (sheeps[i].x<98 && sheeps[i].y<98){
                 // token[i]=true;
