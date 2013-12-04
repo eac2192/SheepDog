@@ -28,9 +28,9 @@ public class Player extends sheepdog.sim.Player {
         this.nblacks = nblacks;
         this.mode = mode;
         this.state = 0;
-        this.useTempDistance = true;
 	this.ticks = 0;
 	this.finalMode = false;
+        this.useTempDistance = false;
     }
     
     // Return: the next position
@@ -334,11 +334,31 @@ public class Player extends sheepdog.sim.Player {
             this.partitions.add(group);
         }
     */
+
+    public int wrap(int x) {
+        if (x >= ndogs) {
+            return x % ndogs;
+        }
+        else {
+            return x;
+        }
+    }
     
 
     public ArrayList<Point> getCorrespondingSheep(Point[] sheep) {
 	if (!partitionOnce) {
-	    return partitions.get(id - 1);
+        ArrayList<Point> p = partitions.get(id - 1);
+	    if (p.size() != 0 || !allCLoseToFence(p)) {
+            return p;
+        } else {
+            System.out.println("bewm");
+            int i = 0;
+            while(p.size() != 0 && !allCLoseToFence(p) && i < ndogs) {
+                p = partitions.get(wrap(id + i));
+                i++;
+            }
+            return p;
+        }
 	}
 	ArrayList<Point> correspondingSheep = new ArrayList<Point>();
 	ArrayList<Integer> sheepIndices = sheepsForDog.get(id - 1);
@@ -460,6 +480,8 @@ public class Player extends sheepdog.sim.Player {
         }
         return count;
     }
+
+
 
     public boolean isClosestTo(Point[] dogs, Point dest) {
         double closest_dist = 200;
@@ -701,6 +723,28 @@ public class Player extends sheepdog.sim.Player {
         for (int i=0; i<points.length; i++) {
             Vector trayectory = new Vector(dogs[i], points[i]);
             if (trayectory.magnitude() >= range) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean allCLoseToFence(Point[] sheeps) {
+        for (int i=0; i<sheeps.length; i++) {
+            Point sheep = sheeps[i];
+            Vector trayectory = new Vector(MIDPOINT, sheep);
+            if (trayectory.magnitude() >= 15) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean allCLoseToFence(ArrayList<Point> sheeps) {
+        for (Point sheep : sheeps) {
+            Vector trayectory = new Vector(MIDPOINT, sheep);
+            System.out.println(trayectory.magnitude());
+            if (trayectory.magnitude() >= 15) {
                 return false;
             }
         }
