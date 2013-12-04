@@ -474,15 +474,20 @@ public class Player extends sheepdog.sim.Player {
 
     public Point chaseFurthestFromGoal(ArrayList<Point>sheeps, Point dest, Point[] dogs) {
         double tmpdis;
-        double furthest_dist = 0;
+        double furthest_dist = -100;
         Point furthest_sheep = dest;
         double dist_to;
         Point current = dogs[id-1];
         boolean sheepOnRightSide = false;
         for (Point sheep : sheeps) {
-            tmpdis = distanceBetween(sheep,current);
-            dist_to = distanceBetween(sheep, dest);
-            if (dist_to >= furthest_dist && !(sheep.x < 50.0) && (tmpdis < 10 || !useTempDistance)) {
+            //tmpdis = ;
+            if (!useTempDistance) {
+                dist_to = distanceBetween(sheep, dest);
+            }
+            else {
+                dist_to = 1.0*distanceBetween(sheep, dest) - 0.8*distanceBetween(sheep,current);
+            }
+            if (dist_to >= furthest_dist && !(sheep.x < 50.0)) {
                 furthest_dist = dist_to;
                 furthest_sheep = sheep;
             }
