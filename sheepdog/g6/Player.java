@@ -261,7 +261,7 @@ public class Player extends sheepdog.sim.Player {
             partitions.add(new ArrayList<Point>());
         }
         for (int idx = 0; idx < sheeps.length; idx++) {
-            if (!mode || idx < nblacks) {
+            if ((!mode || idx < nblacks) && sheeps[idx].x >= 50) {
                 Point s = sheeps[idx];
                 for (int i = 0; i < dogs.length; i++) {
                     if (i == dogs.length - 1) {
@@ -457,7 +457,8 @@ public class Player extends sheepdog.sim.Player {
                 group.add(sheeps[i]);
             }
             if (group.size() == 0) {
-                return this.move_straight(dogs[id-1], new Point(60.0, 50.0), MAX_SPEED);
+                dest = chaseFurthestFromGoal(sheeps, MIDPOINT,dogs);
+                return this.move_straight(dogs[id-1], dest, MAX_SPEED);
             }
             dest = chaseFurthestFromGoal(group, MIDPOINT,dogs);
             return this.move_straight(dogs[id-1], dest, MAX_SPEED);
