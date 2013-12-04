@@ -617,7 +617,7 @@ public class Player extends sheepdog.sim.Player {
         else {
             dir.reverse();
             Vector temp = dir.get_unit();
-            temp.times(1.9);
+            temp.times(0.5);
             temp.plus(sheep);
             return temp.toPoint(); 
         }
