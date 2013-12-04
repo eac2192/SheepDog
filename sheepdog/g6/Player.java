@@ -58,7 +58,7 @@ public class Player extends sheepdog.sim.Player {
 	if (finalMode || mode && areAllBlacksLeftOfGate(sheeps)) {
 	    finalMode = true;
 	    if (!areAllBlacksLeftOfGate(sheeps)) {
-		if (isClosestTo(dogs, MIDPOINT) && dogs[id-1].x < 50 || dogs[id-1].x > 50) {
+		if (isClosestTo(dogs, MIDPOINT) && dogs[id-1].x < 50 || dogs[id-1].x >= 50) {
 		    Point black = getBlackLeftOfGate(sheeps);
 		    Point dest = chaseTowards(black, MIDPOINT, dogs);
 		    return move_straight(dogs[id-1], dest, MAX_SPEED);
