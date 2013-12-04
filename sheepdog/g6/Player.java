@@ -65,7 +65,15 @@ public class Player extends sheepdog.sim.Player {
 		}
 	    }
 	    ArrayList<Point> whiteSheep = getAllWhitesLeftOfGate(sheeps);
-	    Point dest = dogs[id-1].x > 50 ? MIDPOINT : chaseTowards(whiteSheep.get(id % whiteSheep.size()), MIDPOINT, dogs);
+	    Point dest = null;
+	    if (whiteSheep.size()!=0){
+	    dest = dogs[id-1].x > 50 ? MIDPOINT : chaseTowards(whiteSheep.get(id % whiteSheep.size()), MIDPOINT, dogs);
+	    }
+	    else {
+	    	dest = new Point();
+	    	dest.x = dogs[id-1].x;
+	    	dest.y = dogs[id-1].y;
+	    }
 	    Point tmp=move_straight(dogs[id-1], dest, MAX_SPEED);
 	    if (dogs[id-1].x<50) {
         	if (tmp.x>50 && (dogs[id].y<49 ||dogs[id].y>51))
