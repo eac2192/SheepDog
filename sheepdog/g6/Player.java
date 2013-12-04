@@ -408,7 +408,7 @@ public class Player extends sheepdog.sim.Player {
         case 5:
             dest = chaseClosestTowards(sheeps, MIDPOINT,dogs);
             if (distanceFrom(MIDPOINT) < 3) {
-                this.state = 6;
+                // this.state = 6;
             }
             if (!isClosestTo(dogs, dest)) {
                 group = getCorrespondingSheep(sheeps);
