@@ -67,7 +67,7 @@ public class Player extends sheepdog.sim.Player {
         }
 	    return tmp;
 	}
-        if (sheeps.length / dogs.length >= 800 || (mode && nblacks/dogs.length>=8)) {
+        if (sheeps.length / dogs.length >= 8 || (mode && nblacks/dogs.length>=8)) {
             //System.out.println("in the baseline mode");
             Point current = dogs[id - 1];
             double length;
@@ -321,7 +321,7 @@ public class Player extends sheepdog.sim.Player {
         ArrayList<Integer> sheepIndices;
     	ArrayList<Point> correspondingSheep = new ArrayList<Point>();
         int k = -1;
-        while((correspondingSheep.size() == 0 || allCLoseToFence(correspondingSheep, 15.0)) && k < ndogs) {
+        while((correspondingSheep.size() == 0 || allCLoseToFence(correspondingSheep, 10.0)) && k < ndogs) {
             sheepIndices = sheepsForDog.get(wrap(id + k));
             correspondingSheep = new ArrayList<Point>();
             for (int i : sheepIndices) {
@@ -416,7 +416,7 @@ public class Player extends sheepdog.sim.Player {
             //if (distanceFrom(MIDPOINT) < 3) {
                 // this.state = 6;
             //}
-            if (!isClosestTo(dogs, dest)) {
+            if (group.size() == 0 || !isClosestTo(dogs, dest)) {
                 group = getCorrespondingSheep(sheeps);
                 this.state = 8;
                 dest = chaseFurthestFromGoal(sheeps, MIDPOINT,dogs);
@@ -457,9 +457,9 @@ public class Player extends sheepdog.sim.Player {
                 group.add(sheeps[i]);
             }
             if (group.size() == 0) {
-                return this.move_straight(dogs[id-1], new Point(55.0, 50.0), MAX_SPEED);
+                return this.move_straight(dogs[id-1], new Point(60.0, 50.0), MAX_SPEED);
             }
-            dest = chaseFurthestFromGoal(sheeps, MIDPOINT,dogs);
+            dest = chaseFurthestFromGoal(group, MIDPOINT,dogs);
             return this.move_straight(dogs[id-1], dest, MAX_SPEED);
 
         }
