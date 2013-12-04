@@ -59,11 +59,11 @@ public class Player extends sheepdog.sim.Player {
 	    Point tmp=move_straight(dogs[id-1], dest, MAX_SPEED);
 	    if (dogs[id-1].x<50) {
         	if (tmp.x>50 && (dogs[id].y<49 ||dogs[id].y>51))
-        			tmp.x=50;
+        			tmp.x=dogs[id].x;
         }
         if (dogs[id-1].x>50) {
         	if (tmp.x<50 && (dogs[id].y<49 ||dogs[id].y>51))
-        			tmp.x=50;
+        			tmp.x=dogs[id].x;
         }
 	    return tmp;
 	}
