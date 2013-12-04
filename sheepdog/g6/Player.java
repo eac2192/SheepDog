@@ -16,6 +16,7 @@ public class Player extends sheepdog.sim.Player {
     public ArrayList<ArrayList<Integer>> sheepsForDog;
     public boolean partitionOnce = true;
     public boolean useTempDistance;
+    public boolean finalMode;
     public final double MAX_SPEED = 1.98;
     public final Point MIDPOINT = new Point(50, 50);
     public int ticks;
@@ -29,6 +30,7 @@ public class Player extends sheepdog.sim.Player {
         this.state = 0;
         this.useTempDistance = false;
 	this.ticks = 0;
+	this.finalMode = false;
     }
     
     // Return: the next position
@@ -53,21 +55,29 @@ public class Player extends sheepdog.sim.Player {
 	}
         setPos(dogs[id-1]);
         Point next = new Point();
-	if (mode && areAllBlacksLeftOfGate(sheeps)) {
+	if (finalMode || mode && areAllBlacksLeftOfGate(sheeps)) {
+	    finalMode = true;
+	    if (!areAllBlacksLeftOfGate(sheeps)) {
+		if (isClosestTo(dogs, MIDPOINT) && dogs[id-1].x < 50 || dogs[id-1].x > 50) {
+		    Point black = getBlackLeftOfGate(sheeps);
+		    Point dest = chaseTowards(black, MIDPOINT, dogs);
+		    return move_straight(dogs[id-1], dest, MAX_SPEED);
+		}
+	    }
 	    ArrayList<Point> whiteSheep = getAllWhitesLeftOfGate(sheeps);
 	    Point dest = dogs[id-1].x > 50 ? MIDPOINT : chaseTowards(whiteSheep.get(id % whiteSheep.size()), MIDPOINT, dogs);
 	    Point tmp=move_straight(dogs[id-1], dest, MAX_SPEED);
 	    if (dogs[id-1].x<50) {
         	if (tmp.x>50 && (dogs[id].y<49 ||dogs[id].y>51))
-        			tmp.x=dogs[id].x;
-        }
-        if (dogs[id-1].x>50) {
+		    tmp.x=dogs[id].x;
+	    }
+	    if (dogs[id-1].x>50) {
         	if (tmp.x<50 && (dogs[id].y<49 ||dogs[id].y>51))
-        			tmp.x=dogs[id].x;
-        }
+		    tmp.x=dogs[id].x;
+	    }
 	    return tmp;
 	}
-        if (sheeps.length / dogs.length >= 8 || (mode && nblacks/dogs.length>=8)) {
+        if (true || sheeps.length / dogs.length >= 8 || (mode && nblacks/dogs.length>=8)) {
             System.out.println("in the baseline mode");
             Point current = dogs[id - 1];
             double length;
@@ -241,6 +251,15 @@ public class Player extends sheepdog.sim.Player {
 	    }
 	}
 	return result;
+    }
+
+    public Point getBlackLeftOfGate(Point[] sheeps) {
+	for (int i = 0; i < nblacks; i++) {
+	    if (sheeps[i].x > 50) {
+		return sheeps[i];
+	    }
+	}
+	return null;
     }
 
     private Point[] updateToNewSheep(Point[] sheeps,Point[] dogs) {
