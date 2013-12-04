@@ -474,7 +474,7 @@ public class Player extends sheepdog.sim.Player {
 
     public boolean checkIfPast(Point dog, ArrayList<Point> sheeps) {
     for (Point s : sheeps) {
-        if (s.x > dog.x) {
+        if (distanceBetween(s, MIDPOINT) > distanceFrom(MIDPOINT)) {
             return false;
         }
     }
