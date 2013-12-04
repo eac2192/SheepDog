@@ -85,7 +85,7 @@ public class Player extends sheepdog.sim.Player {
 	    }
 	    return tmp;
 	}
-        if (sheeps.length / dogs.length >= 8 || (mode && nblacks/dogs.length>=8)) {
+        if (sheeps.length / dogs.length >= 800 || (mode && nblacks/dogs.length>=8)) {
             //System.out.println("in the baseline mode");
             Point current = dogs[id - 1];
             double length;
@@ -148,50 +148,50 @@ public class Player extends sheepdog.sim.Player {
         next_x = current.x + ((50.5 - current.x) / length) * 1.99;
         next_y = current.y + ((50.5 - current.y) / length) * 1.99;
 
-    } else  {
+    } 
+    else  {
         for (int i = 0; i < targetNum; i++) {
             if ((i % dogs.length) == id - 1 & sheeps[i].x > 50) {
-                // if (sheeps[i].x<98 && sheeps[i].y<98){
-                // token[i]=true;
-                target = true;
-                length = Math.sqrt(Math.pow((current.x - sheeps[i].x), 2)
-                           + Math.pow((current.y - sheeps[i].y), 2));
-                if (length > 0.5) {
-                    System.out.printf("here it is dog %d", id);
-                    System.out.printf("we are chasing sheep %d", i);
-                    double offsetx;
-                    double offsety;
-                    double tmplength;
-                    tmplength = Math.sqrt(Math.pow((sheeps[i].x - 50), 2)
-                                  + Math.pow((sheeps[i].y - 50), 2));
-                    offsetx = (sheeps[i].x - 50) * (1 + tmplength)
-                        / tmplength + 50;
-                    offsety = (sheeps[i].y - 50) * (1 + tmplength)
-                        / tmplength + 50;
-                    length = Math.sqrt(Math.pow((current.x - offsetx), 2)
-                               + Math.pow((current.y - offsety), 2));
-                    next_x = current.x + ((offsetx - current.x) / length)
-                        * 1.99;
-                    next_y = current.y + ((offsety - current.y) / length)
-                        * 1.99;
-                    if (next_x >= 100)
-                        next_x = 100;
-                    if (next_y >= 100)
-                        next_y = 100;
-                    if (next_x < 0)
-                        next_x = 0;
-                    if (next_y < 0)
-                        next_y = 0;
-                    break;
-                } 
-                else {
-                System.out.println("the distance is less than 2");
-                length = Math.sqrt(Math.pow((current.x - 50), 2)
-                           + Math.pow((current.y - 50), 2));
-                next_x = current.x + ((50 - current.x) / length) * 1.98;
-                next_y = current.y + ((50 - current.y) / length) * 1.98;
-                break;
-                }
+                Point dest = chaseCloseTowards(sheeps[i],MIDPOINT,dogs);
+                return this.move_straight(dogs[id-1], dest, MAX_SPEED);
+                // length = Math.sqrt(Math.pow((current.x - sheeps[i].x), 2)
+                //            + Math.pow((current.y - sheeps[i].y), 2));
+                // if (length > 0.5) {
+                //     System.out.printf("here it is dog %d", id);
+                //     System.out.printf("we are chasing sheep %d", i);
+                //     double offsetx;
+                //     double offsety;
+                //     double tmplength;
+                //     tmplength = Math.sqrt(Math.pow((sheeps[i].x - 50), 2)
+                //                   + Math.pow((sheeps[i].y - 50), 2));
+                //     offsetx = (sheeps[i].x - 50) * (1 + tmplength)
+                //         / tmplength + 50;
+                //     offsety = (sheeps[i].y - 50) * (1 + tmplength)
+                //         / tmplength + 50;
+                //     length = Math.sqrt(Math.pow((current.x - offsetx), 2)
+                //                + Math.pow((current.y - offsety), 2));
+                //     next_x = current.x + ((offsetx - current.x) / length)
+                //         * 1.99;
+                //     next_y = current.y + ((offsety - current.y) / length)
+                //         * 1.99;
+                //     if (next_x >= 100)
+                //         next_x = 100;
+                //     if (next_y >= 100)
+                //         next_y = 100;
+                //     if (next_x < 0)
+                //         next_x = 0;
+                //     if (next_y < 0)
+                //         next_y = 0;
+                //     break;
+                // } 
+                // else {
+                // System.out.println("the distance is less than 2");
+                // length = Math.sqrt(Math.pow((current.x - 50), 2)
+                //            + Math.pow((current.y - 50), 2));
+                // next_x = current.x + ((50 - current.x) / length) * 1.98;
+                // next_y = current.y + ((50 - current.y) / length) * 1.98;
+                // break;
+                // }
             }
         }
         if (!target) {
@@ -597,6 +597,26 @@ public class Player extends sheepdog.sim.Player {
         } 
         else {
             return chaseFurthestFromGoal(sheeps, dest, dogs);
+        }
+    }
+
+    public Point chaseCloseTowards(Point sheep, Point dest, Point[] dogs) {
+        Vector dir = new Vector(sheep, dest);
+
+        // handle case that sheep is very close to fence
+        // we use the wall to our benefit
+        if (distanceFromBorder(sheep) < 0.5) {
+            Vector temp = dir.get_unit();
+            temp.times(0.01);
+            temp.plus(sheep);
+            return temp.toPoint();
+        }
+        else {
+            dir.reverse();
+            Vector temp = dir.get_unit();
+            temp.times(0.01);
+            temp.plus(sheep);
+            return temp.toPoint(); 
         }
     }
 
