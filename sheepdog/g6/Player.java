@@ -36,7 +36,7 @@ public class Player extends sheepdog.sim.Player {
     // Return: the next position
     // my position: dogs[id-1]
     public Point move(Point[] dogs, Point[] sheeps) {
-    System.out.println("state:" + this.state);
+    //System.out.println("state:" + this.state);
 	this.ndogs = dogs.length;
     sheeps=updateToNewSheep(sheeps,dogs);
 	if (ticks++ % 20 == 0) {
@@ -85,7 +85,7 @@ public class Player extends sheepdog.sim.Player {
 	    }
 	    return tmp;
 	}
-        if (sheeps.length / dogs.length >= 8 || (mode && nblacks/dogs.length>=8)) {
+        if (true){
             //System.out.println("in the baseline mode");
             Point current = dogs[id - 1];
             double length;
@@ -128,7 +128,7 @@ public class Player extends sheepdog.sim.Player {
     }
 
     public Point baseline(Point[] dogs, Point[] sheeps) {
-    System.out.println("in the baseline mode");
+    //System.out.println("in the baseline mode");
     Point current = dogs[id - 1];
     double length;
     double next_x = 0;
@@ -417,25 +417,25 @@ public class Player extends sheepdog.sim.Player {
             if (group.size() == 0) {
                 // System.out.println("boom");
                 this.state = 5;
-                System.out.println(this.pos.x + " , " + this.pos.y);
+                //System.out.println(this.pos.x + " , " + this.pos.y);
                 return this.pos;
             }
             if (!useTempDistance && checkIfPast(dogs[id-1], group)) {
                 useTempDistance = true;
             }
-            System.out.println("before the chase Further");
+            //System.out.println("before the chase Further");
             dest = chaseFurthestFromGoal(group, MIDPOINT,dogs);
             if (dest.x == 50 && dest.y == 50) {
                 this.state = 5;
                 return this.pos;
             }
-            System.out.println("after the chase Further");
+            //System.out.println("after the chase Further");
             if (distanceFrom(MIDPOINT) < 3 && movedPastThresholdDistance) {
                 this.state = 6;
-                System.out.println("boom");
+                //System.out.println("boom");
                 return this.move_straight(dogs[id-1], dest, MAX_SPEED);
             }
-            System.out.println("before the state 4 return");
+            //System.out.println("before the state 4 return");
             return this.move_straight(dogs[id-1], dest, MAX_SPEED);
         case 5:
             group = getCorrespondingSheep(sheeps);
