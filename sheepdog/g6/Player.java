@@ -178,6 +178,17 @@ public class Player extends sheepdog.sim.Player {
             }
         }
         if (!target) {
+
+	    Point dest = chaseClosestTowards(sheeps, MIDPOINT,dogs);
+	    dest = chaseClosestTowards(sheeps, MIDPOINT,dogs);
+            if (!isClosestTo(dogs, dest)) {
+                ArrayList<Point> group = getCorrespondingSheep(sheeps);
+                dest = chaseFurthestFromGoal(sheeps, MIDPOINT,dogs);
+                return this.move_straight(dogs[id-1], dest, MAX_SPEED);
+            }
+            return this.move_straight(dogs[id-1], dest, MAX_SPEED);
+	    
+	    /*
             System.out.printf("\nelse idle dog?\n");
             System.out.printf("here it is dog %d", id);
 
@@ -204,6 +215,7 @@ public class Player extends sheepdog.sim.Player {
                 next_y = current.y;
 
             }
+	    */
         }
     }
     current.x = next_x;
