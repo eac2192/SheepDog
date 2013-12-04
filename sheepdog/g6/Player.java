@@ -28,7 +28,7 @@ public class Player extends sheepdog.sim.Player {
         this.nblacks = nblacks;
         this.mode = mode;
         this.state = 0;
-        this.useTempDistance = false;
+        this.useTempDistance = true;
 	this.ticks = 0;
 	this.finalMode = false;
     }
