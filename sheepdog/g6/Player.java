@@ -96,13 +96,15 @@ public class Player extends sheepdog.sim.Player {
             }
         } else {
             next = baseline(dogs, sheeps);
+            //System.out.printf("the value of next (%f, %f)",next.x, next.y);
         }
         if (dogs[id-1].x<50) {
-        	if (next.x>50 && (dogs[id].y<49 ||dogs[id].y>51))
+        	//System.out.println("in the fix part");
+        	if (next.x>50 && (dogs[id-1].y<49 ||dogs[id-1].y>51))
         			next.x=50;
         }
         if (dogs[id-1].x>50) {
-        	if (next.x<50 && (dogs[id].y<49 ||dogs[id].y>51))
+        	if (next.x<50 && (dogs[id-1].y<49 ||dogs[id-1].y>51))
         			next.x=50;
         }
         return next;
